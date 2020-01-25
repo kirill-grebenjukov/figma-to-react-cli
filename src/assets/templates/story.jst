@@ -1,0 +1,14 @@
+import React from 'react';
+
+/* eslint-disable-next-line import/no-extraneous-dependencies */
+import { storiesOf } from '@storybook/react-native';
+
+import resolutionDecorator from 'app/src/core/components/resolution-decorator';
+
+import {{componentName}} from './{{componentName}}.component';
+
+storiesOf('Figma Components', module)
+  .addDecorator(resolutionDecorator({ justifyContent: 'flex-start' }))
+  .add('{{componentName}}', screenSize => (
+    <{{componentName}} screenSize={screenSize} />
+  ));

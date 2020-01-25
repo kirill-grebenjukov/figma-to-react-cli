@@ -1,0 +1,19 @@
+{
+  "102:0": {
+    "componentName": "TestScene"
+  },
+  "102:2": {
+    "extend": {
+      "mode": "wrapWith",
+      "import": "import { TouchableOpacity } from 'react-native';",
+      "component": "TouchableOpacity"
+    }
+  },
+  "102:30": {
+    "extend": {
+      "mode": "useAsRoot",
+      "import": "import { TouchableOpacity } from 'react-native';",
+      "component": "TouchableOpacity"
+    }
+  }
+}

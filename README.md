@@ -1,2 +1,2 @@
-# figma-cli
+# Figma CLI
 
