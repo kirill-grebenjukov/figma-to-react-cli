@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 
 import { USE_INSTEAD } from '../constants';
+import { getInstanceNode } from '../utils';
 
 export default async function parseNode({
   // parent
@@ -18,7 +19,7 @@ export default async function parseNode({
     settingsJson,
   } = context;
 
-  const { id, name, children: childrenJson } = nodeJson;
+  const { id, name, type, children: childrenJson } = nodeJson;
 
   const {
     // don't export component completely
@@ -54,7 +55,7 @@ export default async function parseNode({
     };
   }
 
-  if (!skipChildren && childrenJson && mode !== USE_INSTEAD) {
+  if (!skipChildren && childrenJson && mode !== USE_INSTEAD && type !== 'INSTANCE') {
     const activeChildrenJson = childrenJson.filter(({ visible = true }) => visible);
     const activeChildren = await Promise.map(activeChildrenJson, childJson =>
       parseNode({
@@ -85,8 +86,18 @@ export default async function parseNode({
 
     // if sourceMap[componentName] is not null we will reuse existing component and
     // reuse logic is inside a middleware
-    if (componentName && !sourceMap[componentName]) {
-      sourceMap[componentName] = node;
+    if (type === 'INSTANCE') {
+      const { componentId } = nodeJson;
+      const { componentName: className, componentPath: classPath = '' } =
+        settingsJson[componentId] || {};
+
+      node = getInstanceNode(node, className, classPath, context);
+    } else if (componentName) {
+      if (!sourceMap[componentName]) {
+        sourceMap[componentName] = node;
+      }
+
+      node = getInstanceNode(node, componentName, componentPath, context);
     }
   }
 

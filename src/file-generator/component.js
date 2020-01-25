@@ -14,7 +14,11 @@ function collectImports({ importCode, children }) {
 }
 
 export default async function exportJSFile(template, component, { config, prettierOptions }) {
-  const { exportPath, eol, hocs: hocsCfg } = config;
+  const {
+    exportCode: { path: exportPath },
+    eol,
+    hocs: hocsCfg,
+  } = config;
 
   const { componentName, componentPath, renderCode, children, props, hoc } = component;
 

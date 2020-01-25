@@ -4,7 +4,9 @@ import kebabCase from 'just-kebab-case';
 import prettier from 'prettier';
 
 export default async function exportJSFile(template, component, { config, prettierOptions }) {
-  const { exportPath } = config;
+  const {
+    exportCode: { path: exportPath },
+  } = config;
 
   const { componentName, componentPath } = component;
 

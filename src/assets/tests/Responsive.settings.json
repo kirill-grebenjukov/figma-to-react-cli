@@ -15,5 +15,9 @@
       "import": "import { TouchableOpacity } from 'react-native';",
       "component": "TouchableOpacity"
     }
+  },
+  "95:216": {
+    "componentName": "GradientButton",
+    "componentPath": "ui-kit"
   }
 }

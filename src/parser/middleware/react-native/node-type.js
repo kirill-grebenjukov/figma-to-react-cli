@@ -33,16 +33,13 @@ export default function middleware({ node, nodeJson }) {
       res.renderCode = props => [`<Text ${rip(props)}>${nodeJson.characters}</Text>`];
       break;
     case 'COMPONENT':
-      // TODO: change to initialize the component
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [`<View ${rip(props)}>`, ...rc(children), '</View>'];
       break;
     case 'INSTANCE':
-      // TODO: change to initialize the component
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [`<View ${rip(props)}>`, ...rc(children), '</View>'];
       break;
-
     default: {
       // do nothing
     }

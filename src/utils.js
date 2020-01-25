@@ -1,3 +1,4 @@
+import kebabCase from 'just-kebab-case';
 import _ from 'lodash';
 
 export function findNode(json, id) {
@@ -22,16 +23,24 @@ export function findNode(json, id) {
   return null;
 }
 
-export function renderReactTree(node) {
-  const props = {
-    ...node.props,
-  };
+export function getInstanceNode(node, componentName, componentPath, context) {
+  const {
+    exportCode: { codePrefix },
+  } = context;
 
-  if (node.children) {
-    props.children = node.children.map(child => renderReactTree(child));
+  if (!componentName) {
+    return node;
   }
 
-  return node.component(props);
+  const filePath = [codePrefix, componentPath, `${kebabCase(componentName)}.component.js`]
+    .filter(t => !!t)
+    .join('/');
+
+  return {
+    ...node,
+    importCode: [`import { ${componentName} } from '${filePath}';`],
+    renderCode: props => [`<${componentName} ${rip(props)} />`],
+  };
 }
 
 export function clearStylePosition() {
