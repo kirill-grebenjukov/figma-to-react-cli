@@ -1,6 +1,11 @@
 import get from 'lodash/get';
 
-import { rip, clearStylePosition, color } from '../../../utils';
+import {
+  rip,
+  clearStylePosition,
+  copyStyleSizeOrFlex1,
+  color,
+} from '../../../utils';
 
 export default function middleware({ node, nodeJson }) {
   const { fills } = nodeJson;
@@ -33,6 +38,7 @@ export default function middleware({ node, nodeJson }) {
       `<LinearGradient ${rip({
         style: {
           ...get(props, 'style'),
+          ...copyStyleSizeOrFlex1(props),
           opacity,
         },
         start,
@@ -45,6 +51,7 @@ export default function middleware({ node, nodeJson }) {
           ...props,
           style: {
             ...get(props, 'style'),
+            ...copyStyleSizeOrFlex1(props),
             ...clearStylePosition(),
           },
         },

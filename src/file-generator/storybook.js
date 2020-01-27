@@ -3,7 +3,11 @@ import path from 'path';
 import kebabCase from 'just-kebab-case';
 import prettier from 'prettier';
 
-export default async function exportJSFile(template, component, { config, prettierOptions }) {
+export default function exportJSFile(
+  template,
+  component,
+  { config, prettierOptions },
+) {
   const {
     exportCode: { path: exportPath },
   } = config;

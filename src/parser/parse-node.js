@@ -1,7 +1,9 @@
 import Promise from 'bluebird';
+import _ from 'lodash';
 
 import { USE_INSTEAD } from '../constants';
-import { getInstanceNode } from '../utils';
+import { getInstanceNode, isVector, rc } from '../utils';
+import get from 'lodash/get';
 
 export default async function parseNode({
   // parent
@@ -22,6 +24,9 @@ export default async function parseNode({
   const { id, name, type, children: childrenJson } = nodeJson;
 
   const {
+    // should we add `flex: 1` to the component style
+    // we need it for parent (screen) components to occupy all the available space
+    stretch = false,
     // don't export component completely
     dontExport = false,
     // parse component but skip its children
@@ -29,6 +34,7 @@ export default async function parseNode({
     // componentName and componentPath
     componentName,
     componentPath = '',
+    exportAs,
     // hoc
     hoc,
     // extend by an existing component
@@ -50,13 +56,26 @@ export default async function parseNode({
       componentPath,
       ...defaultComponent,
       children: null,
-      props: { key: id },
+      props: {
+        key: id,
+        style: stretch ? { flex: 1 } : undefined,
+      },
       hoc,
     };
   }
 
-  if (!skipChildren && childrenJson && mode !== USE_INSTEAD && type !== 'INSTANCE') {
-    const activeChildrenJson = childrenJson.filter(({ visible = true }) => visible);
+  const noChildren =
+    skipChildren ||
+    !childrenJson ||
+    mode === USE_INSTEAD ||
+    type === 'INSTANCE' ||
+    exportAs ||
+    isVector(type);
+
+  if (!noChildren) {
+    const activeChildrenJson = childrenJson.filter(
+      ({ visible = true }) => visible,
+    );
     const activeChildren = await Promise.map(activeChildrenJson, childJson =>
       parseNode({
         // parent
@@ -77,12 +96,22 @@ export default async function parseNode({
   }
 
   if (node) {
-    node = await Promise.reduce(
-      middlewares,
-      (newNode, middleware) =>
-        middleware({ parentNode, parentJson, node: newNode, nodeJson, sourceMap, context }),
-      node,
-    );
+    const skipHead = exportAs || isVector(type);
+    if (!skipHead) {
+      node = await Promise.reduce(
+        middlewares.head,
+        (newNode, middleware) =>
+          middleware({
+            parentNode,
+            parentJson,
+            node: newNode,
+            nodeJson,
+            sourceMap,
+            context,
+          }),
+        node,
+      );
+    }
 
     // if sourceMap[componentName] is not null we will reuse existing component and
     // reuse logic is inside a middleware
@@ -94,12 +123,29 @@ export default async function parseNode({
       node = getInstanceNode(node, className, classPath, context);
     } else if (componentName) {
       if (!sourceMap[componentName]) {
+        const nodeRenderCode = node.renderCode;
         sourceMap[componentName] = node;
       }
 
       node = getInstanceNode(node, componentName, componentPath, context);
     }
+
+    node = await Promise.reduce(
+      middlewares.tail,
+      (newNode, middleware) =>
+        middleware({
+          parentNode,
+          parentJson,
+          node: newNode,
+          nodeJson,
+          sourceMap,
+          context,
+        }),
+      node,
+    );
   }
+
+  // console.log('node: ', id, name, _.get(node, 'props.key'));
 
   return node;
 }

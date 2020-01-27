@@ -1,6 +1,26 @@
 import kebabCase from 'just-kebab-case';
 import _ from 'lodash';
 
+export function sanitizeFileName(value) {
+  return value
+    .split('.')
+    .join('D')
+    .split(' ')
+    .join('S')
+    .split(':')
+    .join('C')
+    .split(';')
+    .join('Z');
+}
+
+export function sanitizeText(value) {
+  return value
+    .split('{')
+    .join('')
+    .split('}')
+    .join('');
+}
+
 export function findNode(json, id) {
   if (!json) {
     return null;
@@ -23,6 +43,41 @@ export function findNode(json, id) {
   return null;
 }
 
+export function findCanvas(json, name) {
+  if (!json) {
+    return null;
+  }
+
+  if (json.type === 'CANVAS' && json.name === name) {
+    return json;
+  }
+
+  const { children } = json;
+  if (children) {
+    for (let i = 0; i < children.length; i += 1) {
+      const child = findCanvas(children[i], name);
+      if (child) {
+        return child;
+      }
+    }
+  }
+
+  return null;
+}
+
+export function isVector(type) {
+  return (
+    [
+      'VECTOR',
+      'BOOLEAN_OPERATION',
+      'STAR',
+      'LINE',
+      'ELLIPSE',
+      'REGULAR_POLYGON',
+    ].indexOf(type) >= 0
+  );
+}
+
 export function getInstanceNode(node, componentName, componentPath, context) {
   const {
     exportCode: { codePrefix },
@@ -32,13 +87,18 @@ export function getInstanceNode(node, componentName, componentPath, context) {
     return node;
   }
 
-  const filePath = [codePrefix, componentPath, `${kebabCase(componentName)}.component.js`]
+  const filePath = [
+    codePrefix,
+    componentPath,
+    `${kebabCase(componentName)}`,
+    `${kebabCase(componentName)}.component`,
+  ]
     .filter(t => !!t)
     .join('/');
 
   return {
     ...node,
-    importCode: [`import { ${componentName} } from '${filePath}';`],
+    importCode: [`import ${componentName} from '${filePath}';`],
     renderCode: props => [`<${componentName} ${rip(props)} />`],
   };
 }
@@ -67,6 +127,16 @@ export function copyStyleSize(props, def = {}) {
   return {
     width: _.get(props, 'style.width', def.width),
     height: _.get(props, 'style.height', def.height),
+  };
+}
+
+export function copyStyleSizeOrFlex1(props) {
+  const width = _.get(props, 'style.width');
+  const height = _.get(props, 'style.height');
+  return {
+    width,
+    height,
+    flex: !width && !height ? 1 : undefined,
   };
 }
 
@@ -99,10 +169,18 @@ export const rip = (props, level = 0) => {
         .join(', ')}}`;
     } else {
       return `${_.keys(props)
+        .sort((a, b) => {
+          if (a === 'first:prop') return -1;
+          if (a === 'last:prop') return 1;
+
+          return a.localeCompare(b);
+        })
         .map(key => {
           const value = props[key];
 
-          if (_.isString(value)) {
+          if (key === 'first:prop' || key === 'last:prop') {
+            return String(value);
+          } else if (_.isString(value)) {
             return `${key}="${value}"`;
           }
 
@@ -116,7 +194,9 @@ export const rip = (props, level = 0) => {
 };
 
 export const rc = children =>
-  _.flatMap(children, ({ renderCode, props, children: cc }) => renderCode(props, cc));
+  _.flatMap(children, ({ renderCode, props, children: cc }) =>
+    renderCode(props, cc),
+  );
 
 // Aliases
 

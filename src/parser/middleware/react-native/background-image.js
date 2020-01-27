@@ -1,9 +1,14 @@
 import fs from 'fs';
-import path from 'path';
 import axios from 'axios';
 import get from 'lodash/get';
 
-import { rip, copyStylePosition, copyStyleSize, clearStylePosition } from '../../../utils';
+import {
+  rip,
+  copyStylePosition,
+  copyStyleSize,
+  clearStylePosition,
+  sanitizeFileName,
+} from '../../../utils';
 
 const resizeModes = {
   FILL: 'cover',
@@ -12,22 +17,13 @@ const resizeModes = {
   STRETCH: 'stretch',
 };
 
-function sanitize(value) {
-  return value
-    .split('.')
-    .join('_')
-    .split(' ')
-    .join('_')
-    .split(':')
-    .join('_')
-    .split(';')
-    .join('_');
-}
-
 export default async function middleware({ node, nodeJson, context }) {
   const {
     imagesJson,
-    exportImages: { path: exportImagesPath, codePrefix: exportImagesCodePrefix },
+    exportImages: {
+      path: exportImagesPath,
+      codePrefix: exportImagesCodePrefix,
+    },
   } = context;
 
   const { id, name, fills } = nodeJson;
@@ -36,7 +32,8 @@ export default async function middleware({ node, nodeJson, context }) {
   }
 
   const background = fills.find(
-    ({ type, visible = true, opacity = 1.0 }) => type === 'IMAGE' && visible && opacity > 0,
+    ({ type, visible = true, opacity = 1.0 }) =>
+      type === 'IMAGE' && visible && opacity > 0,
   );
 
   if (!background) {
@@ -49,7 +46,7 @@ export default async function middleware({ node, nodeJson, context }) {
     return node;
   }
 
-  const fileName = `${sanitize(name)}_${sanitize(id)}.png`;
+  const fileName = `${sanitizeFileName(name)}I${sanitizeFileName(id)}.png`;
   const filePath = `${exportImagesPath}/${fileName}`;
 
   const { data } = await axios.get(uri, {
@@ -63,14 +60,16 @@ export default async function middleware({ node, nodeJson, context }) {
     ...node,
     importCode: ["import { ImageBackground } from 'react-native';"],
     renderCode: (props, children) => [
-      `<ImageBackground source={require('${exportImagesCodePrefix}/${fileName}')} ${rip({
-        resizeMode: resizeModes[scaleMode],
-        style: {
-          ...copyStylePosition(props),
-          ...copyStyleSize(props, { width: '100%', height: '100%' }),
-          opacity,
+      `<ImageBackground source={require('${exportImagesCodePrefix}/${fileName}')} ${rip(
+        {
+          resizeMode: resizeModes[scaleMode],
+          style: {
+            ...copyStylePosition(props),
+            ...copyStyleSize(props, { width: '100%', height: '100%' }),
+            opacity,
+          },
         },
-      })}>`,
+      )}>`,
       ...node.renderCode(
         {
           ...props,

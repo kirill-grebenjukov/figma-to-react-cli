@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import { rip, clearStylePosition } from '../../../utils';
 
-export default function middleware({ parentNode, parentJson, node, nodeJson, context }) {
+export default function middleware({ parentJson, node, nodeJson, context }) {
   const { frameX, frameY, frameWidth, frameHeight } = context;
 
   const {
@@ -10,7 +10,7 @@ export default function middleware({ parentNode, parentJson, node, nodeJson, con
     constraints: { vertical, horizontal },
   } = nodeJson;
 
-  if (parentNode == null || ['DOCUMENT', 'CANVAS'].indexOf(type) >= 0) {
+  if (['DOCUMENT', 'CANVAS'].indexOf(type) >= 0) {
     return {
       ...node,
       props: {
@@ -25,8 +25,10 @@ export default function middleware({ parentNode, parentJson, node, nodeJson, con
 
   const left = x - get(parentJson, 'absoluteBoundingBox.x', frameX);
   const top = y - get(parentJson, 'absoluteBoundingBox.y', frameY);
-  const right = get(parentJson, 'absoluteBoundingBox.width', frameWidth) - width - left;
-  const bottom = get(parentJson, 'absoluteBoundingBox.height', frameHeight) - height - top;
+  const right =
+    get(parentJson, 'absoluteBoundingBox.width', frameWidth) - width - left;
+  const bottom =
+    get(parentJson, 'absoluteBoundingBox.height', frameHeight) - height - top;
 
   const hProps = {};
   const vProps = {};

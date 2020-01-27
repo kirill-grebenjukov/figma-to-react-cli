@@ -1,6 +1,17 @@
 {
   "102:0": {
-    "componentName": "TestScene"
+    "componentName": "TestScene",
+    "stretch": true
+  },
+  "86:217": {
+    "componentName": "LoginScene",
+    "stretch": true
+  },
+  "86:234": {
+    "exportAs": "svg"
+  },
+  "86:239": {
+    "exportAs": "png"
   },
   "102:2": {
     "extend": {

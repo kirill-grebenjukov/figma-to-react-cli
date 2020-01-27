@@ -11,6 +11,8 @@ import backgroundLinearGradient from './background-linear-gradient';
 
 import textStyles from './text-styles';
 
+import exportAsImageOrSVG from './export-as-image-or-svg';
+
 const middlewares = {
   head: [
     nodeType,
@@ -22,7 +24,7 @@ const middlewares = {
     opacity,
     textStyles,
   ],
-  tail: [layoutAndSize],
+  tail: [exportAsImageOrSVG, layoutAndSize],
 };
 
 export default middlewares;

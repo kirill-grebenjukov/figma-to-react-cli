@@ -13,36 +13,53 @@ function collectImports({ importCode, children }) {
   );
 }
 
-export default async function exportJSFile(template, component, { config, prettierOptions }) {
+export default function exportJSFile(
+  template,
+  component,
+  { config, prettierOptions },
+) {
   const {
     exportCode: { path: exportPath },
     eol,
     hocs: hocsCfg,
   } = config;
 
-  const { componentName, componentPath, renderCode, children, props, hoc } = component;
+  const {
+    componentName,
+    componentPath,
+    renderCode,
+    children,
+    props,
+    hoc,
+    svgCode,
+  } = component;
 
-  const allImportCode = [
-    ...(hocsCfg ? hocsCfg.flatMap(({ import: i }) => i) : []),
-    ...(hoc ? [hoc.import] : []),
-    ...collectImports(component),
-  ];
+  let jsCode = svgCode;
+  if (!jsCode) {
+    const allImportCode = [
+      ...(hocsCfg ? hocsCfg.flatMap(({ import: i }) => i) : []),
+      ...(hoc ? [hoc.import] : []),
+      ...collectImports(component),
+    ];
 
-  const allHocs = [
-    ...(hocsCfg ? hocsCfg.map(({ code: hocCode }) => hocCode) : []),
-    ...(hoc ? [hoc.code] : []),
-  ];
+    const allHocs = [
+      ...(hocsCfg ? hocsCfg.map(({ code: hocCode }) => hocCode) : []),
+      ...(hoc ? [hoc.code] : []),
+    ];
 
-  let jsCode = template
-    .split('{{componentName}}')
-    .join(componentName)
-    .replace('{{import}}', normalizeImports(allImportCode, eol))
-    .replace('{{styles}}', '')
-    .replace('{{render}}', renderCode(props, children).join(eol))
-    .replace(
-      '{{export}}',
-      `export default ${allHocs.reverse().reduce((sum, hoc) => `${hoc}(${sum})`, componentName)};`,
-    );
+    jsCode = template
+      .split('{{componentName}}')
+      .join(componentName)
+      .replace('{{import}}', normalizeImports(allImportCode, eol))
+      .replace('{{styles}}', '')
+      .replace('{{render}}', renderCode(props, children).join(eol))
+      .replace(
+        '{{export}}',
+        `export default ${allHocs
+          .reverse()
+          .reduce((sum, hoc) => `${hoc}(${sum})`, componentName)};`,
+      );
+  }
 
   if (prettierOptions) {
     jsCode = prettier.format(jsCode, prettierOptions);

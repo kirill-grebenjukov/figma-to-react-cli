@@ -8,10 +8,8 @@ export default function getMiddlewares(config) {
     platformMiddlewares = require('./react-native/index').default;
   }
 
-  return [
-    ...platformMiddlewares.head,
-    ...customMiddlewares,
-    // layout and size should be the last middleware
-    ...platformMiddlewares.tail,
-  ];
+  return {
+    head: [...platformMiddlewares.head, ...customMiddlewares.head],
+    tail: [...customMiddlewares.tail, ...platformMiddlewares.tail],
+  };
 }

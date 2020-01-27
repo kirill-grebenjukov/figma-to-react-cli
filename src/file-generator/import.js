@@ -13,7 +13,7 @@ export function linesToMap(imports) {
 
     const m = line.match(regexp);
 
-    if (!m && m.length > 2) {
+    if (!m || m.length < 2) {
       return;
     }
 
@@ -43,7 +43,10 @@ export function linesToMap(imports) {
         .join('')
         .split(',');
 
-      map[lib] = { glob: glob || old.glob, nonGlob: uniq([...(old.nonGlob || []), ...nonGlob]) };
+      map[lib] = {
+        glob: glob || old.glob,
+        nonGlob: uniq([...(old.nonGlob || []), ...nonGlob]),
+      };
     } else {
       map[lib] = { ...old, glob: classes };
     }

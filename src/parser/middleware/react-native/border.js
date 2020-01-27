@@ -3,9 +3,15 @@ import get from 'lodash/get';
 import { color } from '../../../utils';
 
 export default function middleware({ node, nodeJson }) {
-  const { strokes, strokeWeight, cornerRadius, rectangleCornerRadii } = nodeJson;
+  const {
+    strokes,
+    strokeWeight,
+    cornerRadius,
+    rectangleCornerRadii,
+  } = nodeJson;
 
   const props = {
+    ...node.props,
     style: {
       ...get(node, 'props.style'),
     },

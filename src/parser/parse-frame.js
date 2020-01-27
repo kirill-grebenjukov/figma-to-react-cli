@@ -8,7 +8,7 @@ export default async function parseFrame({
   pageJson,
   imagesJson,
   settingsJson,
-  config,
+  context,
 }) {
   const frame = findNode(pageJson, frameId);
 
@@ -21,8 +21,8 @@ export default async function parseFrame({
     absoluteBoundingBox: { x, y, width, height },
   } = frame;
 
-  const context = {
-    ...config,
+  const context2 = {
+    ...context,
     // jsons
     docJson: pageJson,
     imagesJson,
@@ -44,6 +44,6 @@ export default async function parseFrame({
     // tools
     sourceMap,
     middlewares,
-    context,
+    context: context2,
   });
 }
