@@ -5,9 +5,9 @@ import { storiesOf } from '@storybook/react-native';
 
 import resolutionDecorator from 'app/src/core/components/resolution-decorator';
 
-import {{componentName}} from './{{componentName}}.component';
+import {{componentName}} from './{{componentPath}}.component';
 
-storiesOf('Figma Components', module)
+storiesOf('{{storiesOf}}', module)
   .addDecorator(resolutionDecorator({ justifyContent: 'flex-start' }))
   .add('{{componentName}}', screenSize => (
     <{{componentName}} screenSize={screenSize} />
