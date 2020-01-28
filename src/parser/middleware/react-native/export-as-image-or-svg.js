@@ -26,7 +26,7 @@ export default async function middleware({
     settingsJson,
     figmaApi,
     figma: { fileKey },
-    exportCode: { codePrefix: exportCodePrefix },
+    exportSvgComponents: { codePrefix: exportCodePrefix },
     exportImages: {
       path: exportImagesPath,
       codePrefix: exportImagesCodePrefix,

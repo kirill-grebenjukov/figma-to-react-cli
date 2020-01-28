@@ -9,10 +9,13 @@ export default function exportJSFile(
   { config, prettierOptions },
 ) {
   const {
-    exportCode: { path: exportPath },
+    exportCode: { path: exportCodePath },
+    exportSvgComponents: { path: exportSvgPath },
   } = config;
 
-  const { componentName, componentPath } = component;
+  const { componentName, componentPath, svgCode } = component;
+
+  const exportPath = svgCode ? exportSvgPath : exportCodePath;
 
   let jsCode = template.split('{{componentName}}').join(componentName);
 

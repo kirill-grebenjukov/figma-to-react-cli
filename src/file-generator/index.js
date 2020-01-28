@@ -1,5 +1,6 @@
 import fs from 'fs';
 
+import getConfig from './get-config';
 import exportJSFile from './component';
 import exportStoryFile from './storybook';
 
@@ -24,9 +25,7 @@ export default async function exportTree({ context, sourceMap }) {
     ? fs.readFileSync(storybookTemplatePath, { encoding: 'utf8' })
     : null;
 
-  const prettierOptions = prettierrc
-    ? JSON.parse(fs.readFileSync(prettierrc, { encoding: 'utf8' }))
-    : null;
+  const prettierOptions = getConfig(prettierrc);
 
   Object.keys(sourceMap).forEach(key => {
     exportJSFile(componentTemplate, sourceMap[key], {

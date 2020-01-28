@@ -19,7 +19,8 @@ export default function exportJSFile(
   { config, prettierOptions },
 ) {
   const {
-    exportCode: { path: exportPath },
+    exportCode: { path: exportCodePath },
+    exportSvgComponents: { path: exportSvgPath },
     eol,
     hocs: hocsCfg,
   } = config;
@@ -33,6 +34,8 @@ export default function exportJSFile(
     hoc,
     svgCode,
   } = component;
+
+  const exportPath = svgCode ? exportSvgPath : exportCodePath;
 
   let jsCode = svgCode;
   if (!jsCode) {
