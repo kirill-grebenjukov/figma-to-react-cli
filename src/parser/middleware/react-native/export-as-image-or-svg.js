@@ -4,7 +4,15 @@ import camelCase from 'camelcase';
 import kebabCase from 'just-kebab-case';
 import svgr from '@svgr/core';
 
-import { rip, isVector, sanitizeFileName } from '../../../utils';
+import {
+  rip,
+  isVector,
+  sanitizeFileName,
+  copyStylePosition,
+  copyStyleSize,
+  clearStylePosition,
+  clearStyleSize,
+} from '../../../utils';
 
 export default async function middleware({
   node,
@@ -18,7 +26,7 @@ export default async function middleware({
     settingsJson,
     figmaApi,
     figma: { fileKey },
-    exportCode: { path: exportCodePath, codePrefix: exportCodePrefix },
+    exportCode: { codePrefix: exportCodePrefix },
     exportImages: {
       path: exportImagesPath,
       codePrefix: exportImagesCodePrefix,
@@ -92,14 +100,37 @@ export default async function middleware({
       { componentName: className },
     );
 
+    const { props } = node;
+    const componentProps = {
+      ...props,
+      style: {
+        ...props.style,
+        ...clearStylePosition(),
+        ...clearStyleSize(),
+        'last:prop': '...props.style',
+      },
+      'first:prop': '{...props}',
+    };
+
+    const instanceProps = {
+      ...props,
+      style: {
+        ...copyStylePosition(props),
+        ...copyStyleSize(props),
+      },
+    };
+
     sourceMap[className] = {
       ...node,
       componentName: className,
+      componentPath,
+      props: componentProps,
       importCode: [],
       renderCode: () => [],
       svgCode,
     };
 
+    res.props = instanceProps;
     res.importCode = [`import ${className} from '${classPath}';`];
     res.renderCode = props => [`<${className} ${rip(props)} />`];
     res.svgCode = svgCode;

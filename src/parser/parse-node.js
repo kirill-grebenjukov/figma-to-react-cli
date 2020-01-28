@@ -2,14 +2,13 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 
 import { USE_INSTEAD } from '../constants';
-import { getInstanceNode, isVector, rc } from '../utils';
-import get from 'lodash/get';
+import { isVector, clearStylePosition, clearStyleSize } from '../utils';
 
 export default async function parseNode({
-  // parent
+  // parent node
   parentNode,
   parentJson,
-  // current
+  // current node
   nodeJson,
   //
   sourceMap,
@@ -56,10 +55,7 @@ export default async function parseNode({
       componentPath,
       ...defaultComponent,
       children: null,
-      props: {
-        key: id,
-        style: stretch ? { flex: 1 } : undefined,
-      },
+      props: { key: id },
       hoc,
     };
   }
@@ -96,42 +92,8 @@ export default async function parseNode({
   }
 
   if (node) {
-    const skipHead = exportAs || isVector(type);
-    if (!skipHead) {
-      node = await Promise.reduce(
-        middlewares.head,
-        (newNode, middleware) =>
-          middleware({
-            parentNode,
-            parentJson,
-            node: newNode,
-            nodeJson,
-            sourceMap,
-            context,
-          }),
-        node,
-      );
-    }
-
-    // if sourceMap[componentName] is not null we will reuse existing component and
-    // reuse logic is inside a middleware
-    if (type === 'INSTANCE') {
-      const { componentId } = nodeJson;
-      const { componentName: className, componentPath: classPath = '' } =
-        settingsJson[componentId] || {};
-
-      node = getInstanceNode(node, className, classPath, context);
-    } else if (componentName) {
-      if (!sourceMap[componentName]) {
-        const nodeRenderCode = node.renderCode;
-        sourceMap[componentName] = node;
-      }
-
-      node = getInstanceNode(node, componentName, componentPath, context);
-    }
-
     node = await Promise.reduce(
-      middlewares.tail,
+      middlewares,
       (newNode, middleware) =>
         middleware({
           parentNode,
@@ -139,10 +101,23 @@ export default async function parseNode({
           node: newNode,
           nodeJson,
           sourceMap,
+          middlewares,
           context,
         }),
       node,
     );
+
+    if (stretch) {
+      node.props = {
+        ...node.props,
+        style: {
+          ...node.props.style,
+          ...clearStylePosition(),
+          ...clearStyleSize(),
+          flex: 1,
+        },
+      };
+    }
   }
 
   // console.log('node: ', id, name, _.get(node, 'props.key'));

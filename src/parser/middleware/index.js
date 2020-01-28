@@ -3,13 +3,10 @@ export default function getMiddlewares(config) {
     parser: { engine = 'react-native', middlewares: customMiddlewares },
   } = config;
 
-  let platformMiddlewares = { head: [], tail: [] };
+  let platformMiddlewares = [];
   if (engine === 'react-native') {
     platformMiddlewares = require('./react-native/index').default;
   }
 
-  return {
-    head: [...platformMiddlewares.head, ...customMiddlewares.head],
-    tail: [...customMiddlewares.tail, ...platformMiddlewares.tail],
-  };
+  return [...platformMiddlewares, ...customMiddlewares];
 }

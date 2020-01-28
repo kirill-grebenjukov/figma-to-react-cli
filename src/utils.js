@@ -78,7 +78,13 @@ export function isVector(type) {
   );
 }
 
-export function getInstanceNode(node, componentName, componentPath, context) {
+export function getInstanceNode(
+  node,
+  props,
+  componentName,
+  componentPath,
+  context,
+) {
   const {
     exportCode: { codePrefix },
   } = context;
@@ -98,6 +104,7 @@ export function getInstanceNode(node, componentName, componentPath, context) {
 
   return {
     ...node,
+    props,
     importCode: [`import ${componentName} from '${filePath}';`],
     renderCode: props => [`<${componentName} ${rip(props)} />`],
   };
@@ -110,6 +117,13 @@ export function clearStylePosition() {
     right: undefined,
     top: undefined,
     bottom: undefined,
+  };
+}
+
+export function clearStyleSize() {
+  return {
+    width: undefined,
+    height: undefined,
   };
 }
 
@@ -165,7 +179,19 @@ export const rip = (props, level = 0) => {
     if (level > 0) {
       return `{${_.keys(props)
         .filter(key => !_.isNil(props[key]))
-        .map(key => `${key}: ${rip(props[key], level + 1)}`)
+        .sort((a, b) => {
+          if (a === 'first:prop') return -1;
+          if (a === 'last:prop') return 1;
+
+          return a.localeCompare(b);
+        })
+        .map(key => {
+          if (key === 'first:prop' || key === 'last:prop') {
+            return String(props[key]);
+          }
+
+          return `${key}: ${rip(props[key], level + 1)}`;
+        })
         .join(', ')}}`;
     } else {
       return `${_.keys(props)

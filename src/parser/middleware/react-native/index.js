@@ -12,19 +12,20 @@ import backgroundLinearGradient from './background-linear-gradient';
 import textStyles from './text-styles';
 
 import exportAsImageOrSVG from './export-as-image-or-svg';
+import exportToComponent from './export-to-component';
 
-const middlewares = {
-  head: [
-    nodeType,
-    extNodeType,
-    backgroundSolid,
-    backgroundImage,
-    backgroundLinearGradient,
-    border,
-    opacity,
-    textStyles,
-  ],
-  tail: [exportAsImageOrSVG, layoutAndSize],
-};
+const middlewares = [
+  nodeType,
+  extNodeType,
+  backgroundSolid,
+  backgroundImage,
+  backgroundLinearGradient,
+  border,
+  opacity,
+  textStyles,
+  layoutAndSize,
+  exportAsImageOrSVG,
+  exportToComponent,
+];
 
 export default middlewares;
