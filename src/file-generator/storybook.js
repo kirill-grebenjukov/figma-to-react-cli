@@ -6,13 +6,13 @@ import prettier from 'prettier';
 export default function exportJSFile(
   template,
   component,
-  { config, prettierOptions },
+  { context, prettierOptions },
 ) {
   const {
     exportCode: { path: exportCodePath },
     exportSvgComponents: { path: exportSvgPath },
     storybook: { codeSection = 'Components', svgSection = 'SVG' },
-  } = config;
+  } = context;
 
   const { componentName, componentPath, svgCode } = component;
 

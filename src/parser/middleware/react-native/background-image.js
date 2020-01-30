@@ -69,6 +69,8 @@ export default async function middleware({ node, nodeJson, context }) {
             opacity,
           },
         },
+        0,
+        `background-${props.key}`,
       )}>`,
       ...node.renderCode(
         {

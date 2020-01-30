@@ -1,6 +1,12 @@
 import get from 'lodash/get';
 
-import { rip, rc, clearStylePosition, copyStylePosition, copyStyleSize } from '../../../utils';
+import {
+  rip,
+  rc,
+  clearStylePosition,
+  copyStylePosition,
+  copyStyleSize,
+} from '../../../utils';
 import { WRAP_WITH, USE_AS_ROOT, USE_INSTEAD } from '../../../constants';
 
 export default function middleware({ node, nodeJson, context }) {
@@ -20,20 +26,26 @@ export default function middleware({ node, nodeJson, context }) {
 
   if (mode === USE_AS_ROOT) {
     res.renderCode = (props, children) => [
-      `<${extComponent} ${rip(props)}>`,
+      `<${extComponent} ${rip(props, 0, `node-${props.key}`)}>`,
       ...rc(children),
       `</${extComponent}>`,
     ];
   } else if (mode === USE_INSTEAD) {
-    res.renderCode = props => [`<${extComponent} ${rip(props)} />`];
+    res.renderCode = props => [
+      `<${extComponent} ${rip(props, 0, `node-${props.key}`)} />`,
+    ];
   } else if (mode === WRAP_WITH) {
     res.renderCode = (props, children) => [
-      `<${extComponent} ${rip({
-        style: {
-          ...copyStylePosition(props),
-          ...copyStyleSize(props),
+      `<${extComponent} ${rip(
+        {
+          style: {
+            ...copyStylePosition(props),
+            ...copyStyleSize(props),
+          },
         },
-      })}>`,
+        0,
+        `node-${props.key}`,
+      )}>`,
       ...node.renderCode(
         {
           ...props,

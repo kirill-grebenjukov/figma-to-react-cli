@@ -5,6 +5,8 @@ import prettier from 'prettier';
 import _ from 'lodash';
 
 import normalizeImports from './import';
+import { getGlobProps } from '../utils';
+import { renderProps } from './styles';
 
 function collectImports({ importCode, children }) {
   return _.concat(
@@ -13,17 +15,26 @@ function collectImports({ importCode, children }) {
   );
 }
 
+function renderStyles(styles) {
+  if (!styles) {
+    return [''];
+  }
+
+  return ['const PROPS = {', ...renderProps(styles), '}'];
+}
+
 export default function exportJSFile(
   template,
+  stylesMode,
   component,
-  { config, prettierOptions },
+  { context, prettierOptions },
 ) {
   const {
     exportCode: { path: exportCodePath },
     exportSvgComponents: { path: exportSvgPath },
     eol,
     hocs: hocsCfg,
-  } = config;
+  } = context;
 
   const {
     componentName,
@@ -37,12 +48,21 @@ export default function exportJSFile(
 
   const exportPath = svgCode ? exportSvgPath : exportCodePath;
 
+  const componentNameKebab = kebabCase(componentName);
+
+  const inComponentFile = stylesMode === 'in-component-file';
+  const inSeparateFile = stylesMode === 'in-styles-file';
+  const styles = inComponentFile ? getGlobProps() : null;
+
   let jsCode = svgCode;
   if (!jsCode) {
     const allImportCode = [
       ...(hocsCfg ? hocsCfg.flatMap(({ import: i }) => i) : []),
       ...(hoc ? [hoc.import] : []),
       ...collectImports(component),
+      ...(inSeparateFile
+        ? [`import PROPS from './${componentNameKebab}.styles';`]
+        : []),
     ];
 
     const allHocs = [
@@ -54,8 +74,8 @@ export default function exportJSFile(
       .split('{{componentName}}')
       .join(componentName)
       .replace('{{import}}', normalizeImports(allImportCode, eol))
-      .replace('{{styles}}', '')
       .replace('{{render}}', renderCode(props, children).join(eol))
+      .replace('{{styles}}', renderStyles(styles).join(eol))
       .replace(
         '{{export}}',
         `export default ${allHocs
@@ -68,8 +88,6 @@ export default function exportJSFile(
     jsCode = prettier.format(jsCode, prettierOptions);
   }
 
-  // console.log('jsCode: ', jsCode);
-  const componentNameKebab = kebabCase(componentName);
   const fileDir = path.join(exportPath, componentPath, componentNameKebab);
   fs.mkdirSync(fileDir, { recursive: true });
 

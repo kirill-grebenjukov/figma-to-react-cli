@@ -106,7 +106,9 @@ export function getInstanceNode(
     ...node,
     props,
     importCode: [`import ${componentName} from '${filePath}';`],
-    renderCode: props => [`<${componentName} ${rip(props)} />`],
+    renderCode: props => [
+      `<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`,
+    ],
   };
 }
 
@@ -158,7 +160,23 @@ const cc = v => Math.round(v * 255);
 export const color = ({ r, g, b, a }, opacity = 1) =>
   `rgba(${cc(r)}, ${cc(g)}, ${cc(b)}, ${cc(a * opacity)})`;
 
-export const rip = (props, level = 0) => {
+let globProps = null;
+export const initGlobProps = props => {
+  globProps = props;
+};
+
+export const getGlobProps = () => globProps;
+
+export const rip = (props, level = 0, name = null) => {
+  if (level === 0 && name && globProps) {
+    globProps[name] = props;
+    return `{...PROPS['${name}'](props)}`;
+  }
+
+  return rip0(props, level);
+};
+
+export const rip0 = (props, level = 0) => {
   if (_.isNil(props)) {
     return '';
   }
@@ -190,7 +208,9 @@ export const rip = (props, level = 0) => {
             return String(props[key]);
           }
 
-          return `${key}: ${rip(props[key], level + 1)}`;
+          const key0 = key.indexOf('-') >= 0 ? `'${key}'` : key;
+
+          return `${key0}: ${rip(props[key], level + 1)}`;
         })
         .join(', ')}}`;
     } else {

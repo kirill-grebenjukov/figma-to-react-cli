@@ -72,20 +72,24 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
       ...node,
       importCode: ["import { View } from 'react-native';", ...node.importCode],
       renderCode: (props, children) => [
-        `<View ${rip({
-          style: {
-            position: 'absolute',
-            width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
-            height: vertical === 'TOP_BOTTOM' ? '100%' : height,
-            ...hProps,
-            ...vProps,
-            paddingLeft: horizontal === 'LEFT_RIGHT' ? left : undefined,
-            paddingRight: horizontal === 'LEFT_RIGHT' ? right : undefined,
-            paddingTop: vertical === 'TOP_BOTTOM' ? top : undefined,
-            paddingBottom: vertical === 'TOP_BOTTOM' ? bottom : undefined,
-            // backgroundColor: node.id === '102:30' ? 'lime' : undefined,
+        `<View ${rip(
+          {
+            style: {
+              position: 'absolute',
+              width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
+              height: vertical === 'TOP_BOTTOM' ? '100%' : height,
+              ...hProps,
+              ...vProps,
+              paddingLeft: horizontal === 'LEFT_RIGHT' ? left : undefined,
+              paddingRight: horizontal === 'LEFT_RIGHT' ? right : undefined,
+              paddingTop: vertical === 'TOP_BOTTOM' ? top : undefined,
+              paddingBottom: vertical === 'TOP_BOTTOM' ? bottom : undefined,
+              // backgroundColor: node.id === '102:30' ? 'lime' : undefined,
+            },
           },
-        })}>`,
+          0,
+          `container-${props.key}`,
+        )}>`,
         ...node.renderCode(props, children),
         '</View>',
       ],
@@ -110,17 +114,21 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
       ...node,
       importCode: ["import { View } from 'react-native';", ...node.importCode],
       renderCode: (props, children) => [
-        `<View ${rip({
-          style: {
-            position: 'absolute',
-            width: horizontal === 'CENTER' ? '100%' : width,
-            height: vertical === 'CENTER' ? '100%' : height,
-            ...hProps,
-            ...vProps,
-            justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
-            alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
+        `<View ${rip(
+          {
+            style: {
+              position: 'absolute',
+              width: horizontal === 'CENTER' ? '100%' : width,
+              height: vertical === 'CENTER' ? '100%' : height,
+              ...hProps,
+              ...vProps,
+              justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
+              alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
+            },
           },
-        })}>`,
+          0,
+          `container-${props.key}`,
+        )}>`,
         ...node.renderCode(props, children),
         '</View>',
       ],

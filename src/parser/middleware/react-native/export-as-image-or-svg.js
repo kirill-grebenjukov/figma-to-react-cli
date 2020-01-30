@@ -132,7 +132,9 @@ export default async function middleware({
 
     res.props = instanceProps;
     res.importCode = [`import ${className} from '${classPath}';`];
-    res.renderCode = props => [`<${className} ${rip(props)} />`];
+    res.renderCode = props => [
+      `<${className} ${rip(props, 0, `svg-${props.key}`)} />`,
+    ];
     res.svgCode = svgCode;
   } else {
     const filePath = `${exportImagesPath}/${fileName}`;
@@ -145,7 +147,11 @@ export default async function middleware({
 
     res.importCode = ["import { Image } from 'react-native';"];
     res.renderCode = props => [
-      `<Image source={require('${importPath}')} ${rip(props)} />`,
+      `<Image source={require('${importPath}')} ${rip(
+        props,
+        0,
+        `image-${props.key}`,
+      )} />`,
     ];
   }
 

@@ -10,7 +10,7 @@ export default function middleware({ node, nodeJson }) {
       // res.props = { ...node.props, style: { flex: 1 } };
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [
-        `<View ${rip(props)}>`,
+        `<View ${rip(props, 0, `frame-${props.key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -18,7 +18,7 @@ export default function middleware({ node, nodeJson }) {
     case 'GROUP':
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [
-        `<View ${rip(props)}>`,
+        `<View ${rip(props, 0, `group-${props.key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -26,7 +26,7 @@ export default function middleware({ node, nodeJson }) {
     case 'VECTOR':
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [
-        `<View ${rip(props)}>`,
+        `<View ${rip(props, 0, `vector-${props.key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -34,7 +34,7 @@ export default function middleware({ node, nodeJson }) {
     case 'RECTANGLE':
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [
-        `<View ${rip(props)}>`,
+        `<View ${rip(props, 0, `rectangle-${props.key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -42,13 +42,15 @@ export default function middleware({ node, nodeJson }) {
     case 'TEXT':
       res.importCode = ["import { Text } from 'react-native';"];
       res.renderCode = props => [
-        `<Text ${rip(props)}>${sanitizeText(nodeJson.characters)}</Text>`,
+        `<Text ${rip(props, 0, `text-${props.key}`)}>${sanitizeText(
+          nodeJson.characters,
+        )}</Text>`,
       ];
       break;
     case 'COMPONENT':
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [
-        `<View ${rip(props)}>`,
+        `<View ${rip(props, 0, `component-${props.key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -56,7 +58,7 @@ export default function middleware({ node, nodeJson }) {
     case 'INSTANCE':
       res.importCode = ["import { View } from 'react-native';"];
       res.renderCode = (props, children) => [
-        `<View {...props} ${rip(props)}>`,
+        `<View ${rip(props, 0, `instance-${props.key}`)}>`,
         ...rc(children),
         '</View>',
       ];
