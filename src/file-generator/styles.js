@@ -1,5 +1,4 @@
 import kebabCase from 'just-kebab-case';
-import prettier from 'prettier';
 import _ from 'lodash';
 
 import toFile from './to-file';
@@ -24,25 +23,16 @@ export function renderProps(props) {
   ];
 }
 
-export default function exportStylesFile(
-  styles,
-  component,
-  { context, prettierOptions },
-) {
+export default function exportStylesFile(styles, component, { context }) {
   const {
     exportCode: { path: exportPath, stylesExt: ext = 'styles.js' },
     eol,
   } = context;
 
   const { componentName, componentPath } = component;
-
-  let jsCode = ['module.exports = {', ...renderProps(styles), '}'].join(eol);
-
-  if (prettierOptions) {
-    jsCode = prettier.format(jsCode, prettierOptions);
-  }
-
   const componentNameKebab = kebabCase(componentName);
+
+  const jsCode = ['module.exports = {', ...renderProps(styles), '}'].join(eol);
 
   toFile({
     jsCode,

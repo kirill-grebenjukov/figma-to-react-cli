@@ -1,5 +1,4 @@
 import kebabCase from 'just-kebab-case';
-import prettier from 'prettier';
 import _ from 'lodash';
 
 import normalizeImports from './import';
@@ -27,7 +26,7 @@ export default function exportJSFile(
   template,
   stylesMode,
   component,
-  { context, prettierOptions },
+  { context },
 ) {
   const {
     exportCode: { path: exportCodePath, componentExt = 'component.js' },
@@ -83,10 +82,6 @@ export default function exportJSFile(
           .reverse()
           .reduce((sum, hoc) => `${hoc}(${sum})`, componentName)};`,
       );
-  }
-
-  if (prettierOptions) {
-    jsCode = prettier.format(jsCode, prettierOptions);
   }
 
   toFile({

@@ -1,13 +1,8 @@
 import kebabCase from 'just-kebab-case';
-import prettier from 'prettier';
 
 import toFile from './to-file';
 
-export default function exportJSFile(
-  template,
-  component,
-  { context, prettierOptions },
-) {
+export default function exportJSFile(template, component, { context }) {
   const {
     exportCode: { path: exportCodePath },
     exportSvgComponents: { path: exportSvgPath },
@@ -24,15 +19,11 @@ export default function exportJSFile(
   const storiesSection = svgCode ? svgSection : codeSection;
   const componentNameKebab = kebabCase(componentName);
 
-  let jsCode = template
+  const jsCode = template
     .replace('{{componentPath}}', componentNameKebab)
     .replace('{{storiesOf}}', storiesSection)
     .split('{{componentName}}')
     .join(componentName);
-
-  if (prettierOptions) {
-    jsCode = prettier.format(jsCode, prettierOptions);
-  }
 
   toFile({
     jsCode,

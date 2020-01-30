@@ -1,6 +1,5 @@
 import fs from 'fs';
 
-import getConfig from './get-config';
 import exportJSFile from './component';
 import exportStoryFile from './storybook';
 import exportStylesFile from './styles';
@@ -14,7 +13,6 @@ export default async function exportTree({ context, sourceMap }) {
       template: componentTemplatePath = './src/assets/templates/component.jst',
       styles: stylesMode = 'inline',
     },
-    prettierrc,
   } = context;
 
   const componentTemplate = fs.readFileSync(componentTemplatePath, {
@@ -28,8 +26,6 @@ export default async function exportTree({ context, sourceMap }) {
     ? fs.readFileSync(storybookTemplatePath, { encoding: 'utf8' })
     : null;
 
-  const prettierOptions = getConfig(prettierrc);
-
   Object.keys(sourceMap).forEach(key => {
     const extractStyles =
       ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
@@ -39,20 +35,17 @@ export default async function exportTree({ context, sourceMap }) {
 
     exportJSFile(componentTemplate, stylesMode, sourceMap[key], {
       context,
-      prettierOptions,
     });
 
     if ('in-styles-file' === stylesMode && styles) {
       exportStylesFile(styles, sourceMap[key], {
         context,
-        prettierOptions,
       });
     }
 
     if (storybookCfg) {
       exportStoryFile(storybookTemplate, sourceMap[key], {
         context,
-        prettierOptions,
       });
     }
   });
