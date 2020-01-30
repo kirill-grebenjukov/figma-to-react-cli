@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 import kebabCase from 'just-kebab-case';
 import prettier from 'prettier';
+
+import toFile from './to-file';
 
 export default function exportJSFile(
   template,
@@ -11,7 +11,11 @@ export default function exportJSFile(
   const {
     exportCode: { path: exportCodePath },
     exportSvgComponents: { path: exportSvgPath },
-    storybook: { codeSection = 'Components', svgSection = 'SVG' },
+    storybook: {
+      codeSection = 'Components',
+      svgSection = 'SVG',
+      fileExt: ext = 'story.js',
+    },
   } = context;
 
   const { componentName, componentPath, svgCode } = component;
@@ -30,11 +34,12 @@ export default function exportJSFile(
     jsCode = prettier.format(jsCode, prettierOptions);
   }
 
-  const fileDir = path.join(exportPath, componentPath, componentNameKebab);
-  fs.mkdirSync(fileDir, { recursive: true });
-
-  const filePath = path.join(fileDir, `${componentNameKebab}.story.js`);
-  fs.writeFileSync(filePath, jsCode, {
-    encoding: 'utf8',
+  toFile({
+    jsCode,
+    exportPath,
+    componentPath,
+    componentNameKebab,
+    ext,
+    context,
   });
 }

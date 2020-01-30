@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import kebabCase from 'just-kebab-case';
 import prettier from 'prettier';
 import _ from 'lodash';
@@ -7,6 +5,8 @@ import _ from 'lodash';
 import normalizeImports from './import';
 import { getGlobProps } from '../utils';
 import { renderProps } from './styles';
+
+import toFile from './to-file';
 
 function collectImports({ importCode, children }) {
   return _.concat(
@@ -30,8 +30,8 @@ export default function exportJSFile(
   { context, prettierOptions },
 ) {
   const {
-    exportCode: { path: exportCodePath },
-    exportSvgComponents: { path: exportSvgPath },
+    exportCode: { path: exportCodePath, componentExt = 'component.js' },
+    exportSvgComponents: { path: exportSvgPath, fileExt = 'component.js' },
     eol,
     hocs: hocsCfg,
   } = context;
@@ -47,6 +47,7 @@ export default function exportJSFile(
   } = component;
 
   const exportPath = svgCode ? exportSvgPath : exportCodePath;
+  const ext = svgCode ? fileExt : componentExt;
 
   const componentNameKebab = kebabCase(componentName);
 
@@ -88,11 +89,12 @@ export default function exportJSFile(
     jsCode = prettier.format(jsCode, prettierOptions);
   }
 
-  const fileDir = path.join(exportPath, componentPath, componentNameKebab);
-  fs.mkdirSync(fileDir, { recursive: true });
-
-  const filePath = path.join(fileDir, `${componentNameKebab}.component.js`);
-  fs.writeFileSync(filePath, jsCode, {
-    encoding: 'utf8',
+  toFile({
+    jsCode,
+    exportPath,
+    componentPath,
+    componentNameKebab,
+    ext,
+    context,
   });
 }

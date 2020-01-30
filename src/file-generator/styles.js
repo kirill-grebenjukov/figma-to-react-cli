@@ -1,8 +1,8 @@
-import fs from 'fs';
-import path from 'path';
 import kebabCase from 'just-kebab-case';
 import prettier from 'prettier';
 import _ from 'lodash';
+
+import toFile from './to-file';
 
 import { rip0 } from '../utils';
 
@@ -30,7 +30,7 @@ export default function exportStylesFile(
   { context, prettierOptions },
 ) {
   const {
-    exportCode: { path: exportPath },
+    exportCode: { path: exportPath, stylesExt: ext = 'styles.js' },
     eol,
   } = context;
 
@@ -43,11 +43,13 @@ export default function exportStylesFile(
   }
 
   const componentNameKebab = kebabCase(componentName);
-  const fileDir = path.join(exportPath, componentPath, componentNameKebab);
-  fs.mkdirSync(fileDir, { recursive: true });
 
-  const filePath = path.join(fileDir, `${componentNameKebab}.styles.js`);
-  fs.writeFileSync(filePath, jsCode, {
-    encoding: 'utf8',
+  toFile({
+    jsCode,
+    exportPath,
+    componentPath,
+    componentNameKebab,
+    ext,
+    context,
   });
 }
