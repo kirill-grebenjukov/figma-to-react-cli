@@ -5,6 +5,7 @@ export default function getMiddlewares(config) {
 
   let platformMiddlewares = [];
   if (engine === 'react-native') {
+    // eslint-disable-next-line global-require
     platformMiddlewares = require('./react-native/index').default;
   }
 

@@ -78,40 +78,6 @@ export function isVector(type) {
   );
 }
 
-export function getInstanceNode(
-  node,
-  props,
-  componentName,
-  componentPath,
-  context,
-) {
-  const {
-    exportCode: { codePrefix },
-  } = context;
-
-  if (!componentName) {
-    return node;
-  }
-
-  const filePath = [
-    codePrefix,
-    componentPath,
-    `${kebabCase(componentName)}`,
-    `${kebabCase(componentName)}.component`,
-  ]
-    .filter(t => !!t)
-    .join('/');
-
-  return {
-    ...node,
-    props,
-    importCode: [`import ${componentName} from '${filePath}';`],
-    renderCode: props => [
-      `<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`,
-    ],
-  };
-}
-
 export function clearStylePosition() {
   return {
     position: undefined,
@@ -160,22 +126,6 @@ const cc = v => Math.round(v * 255);
 export const color = ({ r, g, b, a }, opacity = 1) =>
   `rgba(${cc(r)}, ${cc(g)}, ${cc(b)}, ${cc(a * opacity)})`;
 
-let globProps = null;
-export const initGlobProps = props => {
-  globProps = props;
-};
-
-export const getGlobProps = () => globProps;
-
-export const rip = (props, level = 0, name = null) => {
-  if (level === 0 && name && globProps) {
-    globProps[name] = props;
-    return `{...PROPS['${name}'](props)}`;
-  }
-
-  return rip0(props, level);
-};
-
 export const rip0 = (props, level = 0) => {
   if (_.isNil(props)) {
     return '';
@@ -190,7 +140,7 @@ export const rip0 = (props, level = 0) => {
   }
 
   if (_.isArray(props)) {
-    return `[${props.map(v => rip(v)).join(', ')}]`;
+    return `[${props.map(v => rip0(v)).join(', ')}]`;
   }
 
   if (_.isObject(props)) {
@@ -210,39 +160,91 @@ export const rip0 = (props, level = 0) => {
 
           const key0 = key.indexOf('-') >= 0 ? `'${key}'` : key;
 
-          return `${key0}: ${rip(props[key], level + 1)}`;
+          return `${key0}: ${rip0(props[key], level + 1)}`;
         })
         .join(', ')}}`;
-    } else {
-      return `${_.keys(props)
-        .sort((a, b) => {
-          if (a === 'first:prop') return -1;
-          if (a === 'last:prop') return 1;
-
-          return a.localeCompare(b);
-        })
-        .map(key => {
-          const value = props[key];
-
-          if (key === 'first:prop' || key === 'last:prop') {
-            return String(value);
-          } else if (_.isString(value)) {
-            return `${key}="${value}"`;
-          }
-
-          return `${key}={${rip(props[key], level + 1)}}`;
-        })
-        .join(' ')}`;
     }
+    return `${_.keys(props)
+      .sort((a, b) => {
+        if (a === 'first:prop') return -1;
+        if (a === 'last:prop') return 1;
+
+        return a.localeCompare(b);
+      })
+      .map(key => {
+        const value = props[key];
+
+        if (key === 'first:prop' || key === 'last:prop') {
+          return String(value);
+        }
+
+        if (_.isString(value)) {
+          return `${key}="${value}"`;
+        }
+
+        return `${key}={${rip0(props[key], level + 1)}}`;
+      })
+      .join(' ')}`;
   }
 
   return String(props);
 };
 
+let globProps = null;
+export const initGlobProps = props => {
+  globProps = props;
+};
+
+export const getGlobProps = () => globProps;
+
+export const rip = (props, level = 0, name = null) => {
+  if (level === 0 && name && globProps) {
+    globProps[name] = props;
+    return `{...PROPS['${name}'](props)}`;
+  }
+
+  return rip0(props, level);
+};
+
 export const rc = children =>
-  _.flatMap(children, ({ renderCode, props, children: cc }) =>
-    renderCode(props, cc),
+  _.flatMap(children, ({ renderCode, props, children: ch }) =>
+    renderCode(props, ch),
   );
+
+export function getInstanceNode(
+  node,
+  props,
+  componentName,
+  componentPath,
+  context,
+) {
+  const {
+    exportCode: { codePrefix },
+  } = context;
+
+  if (!componentName) {
+    return node;
+  }
+
+  const filePath = [
+    codePrefix,
+    componentPath,
+    `${kebabCase(componentName)}`,
+    `${kebabCase(componentName)}.component`,
+  ]
+    .filter(t => !!t)
+    .join('/');
+
+  return {
+    ...node,
+    props,
+    importCode: [`import ${componentName} from '${filePath}';`],
+    // eslint-disable-next-line no-shadow
+    renderCode: props => [
+      `<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`,
+    ],
+  };
+}
 
 // Aliases
 

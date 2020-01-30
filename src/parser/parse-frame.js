@@ -14,7 +14,7 @@ export default async function parseFrame({
 
   if (!frame) {
     console.warn(`Node ${frameId} not found in the tree`);
-    return;
+    return null;
   }
 
   const {

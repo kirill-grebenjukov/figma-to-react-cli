@@ -120,6 +120,7 @@ export default async function middleware({
       },
     };
 
+    // eslint-disable-next-line no-param-reassign
     sourceMap[className] = {
       ...node,
       componentName: className,
@@ -132,6 +133,7 @@ export default async function middleware({
 
     res.props = instanceProps;
     res.importCode = [`import ${className} from '${classPath}';`];
+    // eslint-disable-next-line no-shadow
     res.renderCode = props => [
       `<${className} ${rip(props, 0, `svg-${props.key}`)} />`,
     ];

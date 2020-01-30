@@ -1,7 +1,9 @@
 import fs from 'fs';
 import Promise from 'bluebird';
 import * as Figma from 'figma-api';
+import _ from 'lodash';
 
+// eslint-disable-next-line import/no-unresolved
 import config from 'figma-cli.config';
 
 import parseFigma from './parser';
@@ -11,8 +13,6 @@ import { findCanvas } from './utils';
 // import pageJson from './assets/tests/Responsive.json';
 // import imagesJson from './assets/tests/Responsive.images.json';
 import settingsJson from './assets/tests/Responsive.settings.json';
-
-import _ from 'lodash';
 
 const {
   figma: { personalAccessToken, fileKey, pageName },

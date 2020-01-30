@@ -80,7 +80,7 @@ export default function exportJSFile(
         '{{export}}',
         `export default ${allHocs
           .reverse()
-          .reduce((sum, hoc) => `${hoc}(${sum})`, componentName)};`,
+          .reduce((sum, theHoc) => `${theHoc}(${sum})`, componentName)};`,
       );
   }
 

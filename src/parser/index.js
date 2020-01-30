@@ -3,7 +3,12 @@ import Promise from 'bluebird';
 import getMiddlewares from './middleware';
 import parseFrame from './parse-frame';
 
-export default async function parsePage({ pageJson, imagesJson, settingsJson, context }) {
+export default async function parsePage({
+  pageJson,
+  imagesJson,
+  settingsJson,
+  context,
+}) {
   const frames = pageJson.children.reduce((sum, child) => {
     const { id, type } = child;
     if (type !== 'FRAME') {

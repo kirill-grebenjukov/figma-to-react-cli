@@ -9,7 +9,8 @@ export default function middleware({ node, nodeJson }) {
   }
 
   const background = fills.find(
-    ({ type, visible = true, opacity = 1.0 }) => type === 'SOLID' && visible && opacity > 0,
+    ({ type, visible = true, opacity = 1.0 }) =>
+      type === 'SOLID' && visible && opacity > 0,
   );
 
   if (!background) {

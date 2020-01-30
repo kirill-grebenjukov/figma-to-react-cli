@@ -71,7 +71,9 @@ export default async function middleware({
       );
     }
 
+    // eslint-disable-next-line no-param-reassign
     node.props = componentProps;
+    // eslint-disable-next-line no-param-reassign
     sourceMap[componentName] = node;
 
     // we should not return instance component if there is no parent

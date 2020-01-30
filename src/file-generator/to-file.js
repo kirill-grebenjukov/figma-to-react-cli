@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 export default function({
-  jsCode: code,
+  jsCode,
   exportPath,
   componentPath,
   componentNameKebab,
@@ -10,24 +10,24 @@ export default function({
   context,
 }) {
   const { beautify = [] } = context;
-  const jsCode = beautify.reduce(
-    (jsCode, fn) =>
+  const code = beautify.reduce(
+    (newCode, fn) =>
       fn({
-        jsCode,
+        jsCode: newCode,
         exportPath,
         componentPath,
         componentNameKebab,
         ext,
         context,
       }),
-    code,
+    jsCode,
   );
 
   const fileDir = path.join(exportPath, componentPath, componentNameKebab);
   fs.mkdirSync(fileDir, { recursive: true });
 
   const filePath = path.join(fileDir, `${componentNameKebab}.${ext}`);
-  fs.writeFileSync(filePath, jsCode, {
+  fs.writeFileSync(filePath, code, {
     encoding: 'utf8',
   });
 }

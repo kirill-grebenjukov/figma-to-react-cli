@@ -10,14 +10,13 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    'jest/globals': true,
   },
-  plugins: ['babel', 'import', 'compat', 'jest', 'prettier'],
+  plugins: ['babel', 'import', 'compat', 'prettier'],
   rules: {
     indent: 0,
     'no-console': 0,
     'no-unused-vars': 0,
-    'max-len': [1, 150],
+    'max-len': [1, 120],
     'no-else-return': 1,
     'lines-between-class-members': 1,
     'operator-linebreak': 0, // Несовместимо с prettier

@@ -41,7 +41,7 @@ export default async function parseNode({
   } = settingsJson[id] || {};
 
   if (dontExport) {
-    return;
+    return null;
   }
 
   let node = null;
@@ -119,8 +119,6 @@ export default async function parseNode({
       };
     }
   }
-
-  // console.log('node: ', id, name, _.get(node, 'props.key'));
 
   return node;
 }

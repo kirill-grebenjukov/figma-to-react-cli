@@ -37,7 +37,7 @@ export default async function exportTree({ context, sourceMap }) {
       context,
     });
 
-    if ('in-styles-file' === stylesMode && styles) {
+    if (stylesMode === 'in-styles-file' && styles) {
       exportStylesFile(styles, sourceMap[key], {
         context,
       });
