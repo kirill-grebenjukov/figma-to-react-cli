@@ -1,8 +1,8 @@
 {
-  "name": "figma-cli",
+  "name": "figma-react-cli",
   "version": "0.0.1",
   "description": "ReactJS component code generator from Figma JSON",
-  "main": "dist/server.js",
+  "main": "dist/index.js",
   "keywords": [
     "react",
     "react-native",
@@ -10,8 +10,11 @@
   ],
   "author": "MobileRockets",
   "license": "ISC",
+  "bin": {
+    "figma-cli": "./scripts/figma"
+  },
   "scripts": {
-    "build": "npm run clean && babel src -d dist --extensions '.ts,.js'",
+    "build": "npm run clean && babel src -d dist",
     "build-run": "npm run build && npm run server",
     "clean": "rimraf dist",
     "lint": "eslint .",

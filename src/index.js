@@ -3,7 +3,7 @@ import * as Figma from 'figma-api';
 import _ from 'lodash';
 
 // eslint-disable-next-line import/no-unresolved
-import config from 'figma-cli.config';
+import config from '.figma-cli.config';
 
 import parseFigma from './parser';
 import exportFiles from './file-generator';
