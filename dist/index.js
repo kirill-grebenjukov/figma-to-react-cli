@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
