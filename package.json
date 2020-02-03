@@ -11,7 +11,7 @@
   "author": "MobileRockets",
   "license": "ISC",
   "bin": {
-    "figma-to-react": "./scripts/figma-to-react"
+    "figma-to-react": "./dist/index.js"
   },
   "scripts": {
     "build": "npm run clean && babel src -d dist",
