@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import Promise from 'bluebird';
 import * as Figma from 'figma-api';
 import _ from 'lodash';
