@@ -1,7 +1,7 @@
 {
-  "name": "figma-react-cli",
+  "name": "figma-to-react-cli",
   "version": "0.0.1",
-  "description": "ReactJS component code generator from Figma JSON",
+  "description": "Transform Figma UI into React/React-native components",
   "main": "dist/index.js",
   "keywords": [
     "react",
@@ -11,7 +11,7 @@
   "author": "MobileRockets",
   "license": "ISC",
   "bin": {
-    "figma-cli": "./scripts/figma"
+    "figma-to-react": "./scripts/figma-to-react"
   },
   "scripts": {
     "build": "npm run clean && babel src -d dist",
@@ -77,6 +77,7 @@
     "axios": "0.19.2",
     "bluebird": "3.7.2",
     "camelcase": "5.3.1",
+    "cosmiconfig": "6.0.0",
     "figma-api": "1.5.5",
     "just-kebab-case": "1.1.0",
     "lodash": "4.17.15"

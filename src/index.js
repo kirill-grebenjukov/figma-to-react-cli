@@ -2,14 +2,15 @@ import Promise from 'bluebird';
 import * as Figma from 'figma-api';
 import _ from 'lodash';
 
-// eslint-disable-next-line import/no-unresolved
-import config from '.figma-cli.config';
+import { cosmiconfigSync } from 'cosmiconfig';
 
 import parseFigma from './parser';
 import exportFiles from './file-generator';
 import { findCanvas } from './utils';
 
 import settingsJson from './assets/tests/Responsive.settings.json';
+
+const { config } = cosmiconfigSync('figma-to-react-cli').search();
 
 const {
   figma: { personalAccessToken, fileKey, pageName },

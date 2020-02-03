@@ -6,7 +6,7 @@ var Figma = _interopRequireWildcard(require("figma-api"));
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
-var _figmaCli = _interopRequireDefault(require("../.figma-cli.config"));
+var _cosmiconfig = require("cosmiconfig");
 
 var _parser = _interopRequireDefault(require("./parser"));
 
@@ -27,12 +27,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 const {
+  config
+} = (0, _cosmiconfig.cosmiconfigSync)('figma-to-react-cli').search();
+const {
   figma: {
     personalAccessToken,
     fileKey,
     pageName
   }
-} = _figmaCli.default; // https://www.figma.com/developers/api
+} = config; // https://www.figma.com/developers/api
 
 const figmaApi = new Figma.Api({
   personalAccessToken
@@ -55,7 +58,7 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
 
   console.log('Parsing...');
 
-  const context = _objectSpread({}, _figmaCli.default, {
+  const context = _objectSpread({}, config, {
     figmaApi
   });
 
