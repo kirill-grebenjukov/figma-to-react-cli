@@ -6,3 +6,6 @@ export const USE_AS_ROOT = 'useAsRoot';
 
 // use this component instead of original, don't parse/place children inside
 export const USE_INSTEAD = 'useInstead';
+
+export const STORE_NAME = 'FigmaToReactStore';
+export const TEXT_STORE_NAME = 'JsonStore';

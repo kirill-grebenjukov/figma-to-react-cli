@@ -8,9 +8,8 @@ import { cosmiconfigSync } from 'cosmiconfig';
 
 import parseFigma from './parser';
 import exportFiles from './file-generator';
-import { findCanvas } from './utils';
-
-import settingsJson from './assets/tests/Responsive.settings.json';
+import { findCanvas, findNodeByName } from './utils';
+import { STORE_NAME, TEXT_STORE_NAME } from './constants';
 
 const { config } = cosmiconfigSync('figma-to-react-cli').search();
 
@@ -32,9 +31,29 @@ Promise.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey)])
       console.log('Getting data from Figma...');
       const pageJson = pageName ? findCanvas(document, pageName) : document;
       if (!pageJson) {
-        console.log('No page/canvas found');
+        console.log(`Can not find page/canvas with name '${pageName}'`);
         return;
       }
+
+      const settingsFrame = findNodeByName(pageJson, STORE_NAME);
+      if (!settingsFrame) {
+        console.log(`Can not find Frame with name '${STORE_NAME}'`);
+        return;
+      }
+
+      const settingsTextNode = findNodeByName(settingsFrame, TEXT_STORE_NAME);
+      if (!settingsTextNode) {
+        console.log(`Can not find TextNode with name '${TEXT_STORE_NAME}'`);
+        return;
+      }
+
+      const settingsText = settingsTextNode.characters;
+      if (!settingsText) {
+        console.log('TextNode with settings is empty. No reason to proceed.');
+        return;
+      }
+
+      const settingsJson = JSON.parse(settingsText);
 
       console.log('Parsing...');
       const context = { ...config, figmaApi };

@@ -43,6 +43,28 @@ export function findNode(json, id) {
   return null;
 }
 
+export function findNodeByName(json, name) {
+  if (!json) {
+    return null;
+  }
+
+  if (json.name === name) {
+    return json;
+  }
+
+  const { children } = json;
+  if (children) {
+    for (let i = 0; i < children.length; i += 1) {
+      const child = findNodeByName(children[i], name);
+      if (child) {
+        return child;
+      }
+    }
+  }
+
+  return null;
+}
+
 export function findCanvas(json, name) {
   if (!json) {
     return null;
