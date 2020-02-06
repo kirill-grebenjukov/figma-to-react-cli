@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.sanitizeFileName = sanitizeFileName;
 exports.sanitizeText = sanitizeText;
 exports.findNode = findNode;
+exports.findNodeByName = findNodeByName;
 exports.findCanvas = findCanvas;
 exports.isVector = isVector;
 exports.clearStylePosition = clearStylePosition;
@@ -50,6 +51,32 @@ function findNode(json, id) {
   if (children) {
     for (let i = 0; i < children.length; i += 1) {
       const child = findNode(children[i], id);
+
+      if (child) {
+        return child;
+      }
+    }
+  }
+
+  return null;
+}
+
+function findNodeByName(json, name) {
+  if (!json) {
+    return null;
+  }
+
+  if (json.name === name) {
+    return json;
+  }
+
+  const {
+    children
+  } = json;
+
+  if (children) {
+    for (let i = 0; i < children.length; i += 1) {
+      const child = findNodeByName(children[i], name);
 
       if (child) {
         return child;

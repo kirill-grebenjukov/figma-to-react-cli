@@ -15,7 +15,7 @@ var _fileGenerator = _interopRequireDefault(require("./file-generator"));
 
 var _utils = require("./utils");
 
-var _ResponsiveSettings = _interopRequireDefault(require("./assets/tests/Responsive.settings.json"));
+var _constants = require("./constants");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -53,10 +53,32 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
   const pageJson = pageName ? (0, _utils.findCanvas)(document, pageName) : document;
 
   if (!pageJson) {
-    console.log('No page/canvas found');
+    console.log(`Can not find page/canvas with name '${pageName}'`);
     return;
   }
 
+  const settingsFrame = (0, _utils.findNodeByName)(pageJson, _constants.STORE_NAME);
+
+  if (!settingsFrame) {
+    console.log(`Can not find Frame with name '${_constants.STORE_NAME}'`);
+    return;
+  }
+
+  const settingsTextNode = (0, _utils.findNodeByName)(settingsFrame, _constants.TEXT_STORE_NAME);
+
+  if (!settingsTextNode) {
+    console.log(`Can not find TextNode with name '${_constants.TEXT_STORE_NAME}'`);
+    return;
+  }
+
+  const settingsText = settingsTextNode.characters;
+
+  if (!settingsText) {
+    console.log('TextNode with settings is empty. No reason to proceed.');
+    return;
+  }
+
+  const settingsJson = JSON.parse(settingsText);
   console.log('Parsing...');
 
   const context = _objectSpread({}, config, {
@@ -66,7 +88,7 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
   const sourceMap = await (0, _parser.default)({
     pageJson,
     imagesJson,
-    settingsJson: _ResponsiveSettings.default,
+    settingsJson,
     context
   });
   console.log('Exporting...');
