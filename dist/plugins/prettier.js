@@ -1,10 +1,5 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
 var _prettier = _interopRequireDefault(require("prettier"));
 
 var _getConfig = _interopRequireDefault(require("../file-generator/get-config"));
@@ -26,5 +21,4 @@ const plugin = ({
   };
 };
 
-var _default = plugin;
-exports.default = _default;
+module.exports = plugin;
