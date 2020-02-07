@@ -83,6 +83,6 @@
     "just-kebab-case": "1.1.0",
     "lodash": "4.17.15",
     "eslint": "5.16.0",
-    "prettier": "^1.14.3",
-  },
+    "prettier": "^1.14.3"
+  }
 }
