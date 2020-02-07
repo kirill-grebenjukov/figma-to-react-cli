@@ -100,6 +100,13 @@ export function isVector(type) {
   );
 }
 
+export function getCodeExtension(extension) {
+  return extension
+    .split('.')
+    .slice(0, -1)
+    .join('.');
+}
+
 export function clearStylePosition() {
   return {
     position: undefined,
@@ -238,21 +245,29 @@ export function getInstanceNode(
   props,
   componentName,
   componentPath,
+  svgCode,
   context,
 ) {
   const {
-    exportCode: { codePrefix },
+    exportCode: { codePrefix: codeClassPrefix, componentExt = 'component.js' },
+    exportSvgComponents: {
+      codePrefix: codeSvgPrefix,
+      fileExt = 'component.js',
+    },
   } = context;
 
   if (!componentName) {
     return node;
   }
 
+  const codePrefix = svgCode ? codeSvgPrefix : codeClassPrefix;
+  const ext = svgCode ? fileExt : componentExt;
+
   const filePath = [
     codePrefix,
     componentPath,
     `${kebabCase(componentName)}`,
-    `${kebabCase(componentName)}.component`,
+    `${kebabCase(componentName)}.${getCodeExtension(ext)}`,
   ]
     .filter(t => !!t)
     .join('/');

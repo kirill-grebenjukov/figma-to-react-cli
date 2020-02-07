@@ -57,7 +57,7 @@ export default function exportJSFile(
   let jsCode = svgCode;
   if (!jsCode) {
     const allImportCode = [
-      ...(hocsCfg ? hocsCfg.flatMap(({ import: i }) => i) : []),
+      ...(hocsCfg ? _.flatMap(hocsCfg, ({ import: i }) => i) : []),
       ...(hoc ? [hoc.import] : []),
       ...collectImports(component),
       ...(inSeparateFile

@@ -1,15 +1,16 @@
 import kebabCase from 'just-kebab-case';
 
 import toFile from './to-file';
+import { getCodeExtension } from '../utils';
 
 export default function exportJSFile(template, component, { context }) {
   const {
-    exportCode: { path: exportCodePath },
-    exportSvgComponents: { path: exportSvgPath },
+    exportCode: { path: exportCodePath, componentExt },
+    exportSvgComponents: { path: exportSvgPath, fileExt },
     storybook: {
       codeSection = 'Components',
       svgSection = 'SVG',
-      fileExt: ext = 'story.js',
+      fileExt: storyExt = 'story.js',
     },
   } = context;
 
@@ -17,11 +18,13 @@ export default function exportJSFile(template, component, { context }) {
 
   const exportPath = svgCode ? exportSvgPath : exportCodePath;
   const storiesSection = svgCode ? svgSection : codeSection;
+  const ext = getCodeExtension(svgCode ? fileExt : componentExt);
   const componentNameKebab = kebabCase(componentName);
 
   const jsCode = template
     .replace('{{componentPath}}', componentNameKebab)
     .replace('{{storiesOf}}', storiesSection)
+    .replace('{{extension}}', ext)
     .split('{{componentName}}')
     .join(componentName);
 
@@ -30,7 +33,7 @@ export default function exportJSFile(template, component, { context }) {
     exportPath,
     componentPath,
     componentNameKebab,
-    ext,
+    ext: storyExt,
     context,
   });
 }

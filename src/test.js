@@ -9,9 +9,9 @@ import parseFigma from './parser';
 import exportFiles from './file-generator';
 import { findCanvas } from './utils';
 
-// import pageJson from './assets/tests/Responsive.json';
-// import imagesJson from './assets/tests/Responsive.images.json';
-import settingsJson from './assets/tests/Responsive.settings.json';
+// import pageJson from '../tests/Responsive.json';
+// import imagesJson from '../tests/Responsive.images.json';
+import settingsJson from '../tests/Responsive.settings.json';
 
 const { config } = cosmiconfigSync('figma-to-react-cli').search();
 

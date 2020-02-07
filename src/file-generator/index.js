@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { resolve } from 'path';
 
 import exportJSFile from './component';
 import exportStoryFile from './storybook';
@@ -10,7 +11,10 @@ export default async function exportTree({ context, sourceMap }) {
   const {
     storybook: storybookCfg = {},
     exportCode: {
-      template: componentTemplatePath = './src/assets/templates/component.jst',
+      template: componentTemplatePath = resolve(
+        __dirname,
+        '../assets/templates/component.jst',
+      ),
       styles: stylesMode = 'inline',
     },
   } = context;
@@ -20,7 +24,10 @@ export default async function exportTree({ context, sourceMap }) {
   });
 
   const {
-    template: storybookTemplatePath = './src/assets/templates/story.jst',
+    template: storybookTemplatePath = resolve(
+      __dirname,
+      '../assets/templates/story.jst',
+    ),
   } = storybookCfg;
   const storybookTemplate = storybookCfg
     ? fs.readFileSync(storybookTemplatePath, { encoding: 'utf8' })

@@ -12,6 +12,7 @@ import {
   copyStyleSize,
   clearStylePosition,
   clearStyleSize,
+  getCodeExtension,
 } from '../../../utils';
 
 export default async function middleware({
@@ -26,7 +27,7 @@ export default async function middleware({
     settingsJson,
     figmaApi,
     figma: { fileKey },
-    exportSvgComponents: { codePrefix: exportCodePrefix },
+    exportSvgComponents: { codePrefix: exportCodePrefix, fileExt },
     exportImages: {
       path: exportImagesPath,
       codePrefix: exportImagesCodePrefix,
@@ -86,7 +87,7 @@ export default async function middleware({
       exportCodePrefix,
       componentPath,
       `${kebabCase(className)}`,
-      `${kebabCase(className)}.component`,
+      `${kebabCase(className)}.${getCodeExtension(fileExt)}`,
     ]
       .filter(t => !!t)
       .join('/');

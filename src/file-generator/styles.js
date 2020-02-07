@@ -11,7 +11,7 @@ export function renderProps(props) {
   }
 
   return [
-    ..._.keys(props).flatMap(key0 => {
+    ..._.flatMap(_.keys(props), key0 => {
       const key = key0.indexOf('-') ? `'${key0}'` : key0;
       const value = rip0(props[key0], 1)
         .split('{...props},')
@@ -25,12 +25,14 @@ export function renderProps(props) {
 
 export default function exportStylesFile(styles, component, { context }) {
   const {
-    exportCode: { path: exportPath, stylesExt: ext = 'styles.js' },
+    exportCode: { path: exportCodePath, stylesExt: ext = 'styles.js' },
+    exportSvgComponents: { path: exportSvgPath },
     eol,
   } = context;
 
-  const { componentName, componentPath } = component;
+  const { componentName, componentPath, svgCode } = component;
   const componentNameKebab = kebabCase(componentName);
+  const exportPath = svgCode ? exportSvgPath : exportCodePath;
 
   const jsCode = ['module.exports = {', ...renderProps(styles), '}'].join(eol);
 
