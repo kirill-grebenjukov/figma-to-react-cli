@@ -27,4 +27,4 @@ const plugin = ({ eslintrc }) => {
   };
 };
 
-export default plugin;
+module.exports = plugin;

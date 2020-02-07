@@ -14,4 +14,4 @@ const plugin = ({ prettierrc }) => {
   };
 };
 
-export default plugin;
+module.exports = plugin;
