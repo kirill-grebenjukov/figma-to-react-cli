@@ -14,7 +14,7 @@ var _fileGenerator = _interopRequireDefault(require("./file-generator"));
 
 var _utils = require("./utils");
 
-var _ResponsiveSettings = _interopRequireDefault(require("./assets/tests/Responsive.settings.json"));
+var _ResponsiveSettings = _interopRequireDefault(require("../tests/Responsive.settings.json"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 

@@ -41,7 +41,8 @@ async function middleware({
       fileKey
     },
     exportSvgComponents: {
-      codePrefix: exportCodePrefix
+      codePrefix: exportCodePrefix,
+      fileExt
     },
     exportImages: {
       path: exportImagesPath,
@@ -97,7 +98,7 @@ async function middleware({
     const className = componentName || (0, _camelcase.default)(fileName, {
       pascalCase: true
     });
-    const classPath = [exportCodePrefix, componentPath, `${(0, _justKebabCase.default)(className)}`, `${(0, _justKebabCase.default)(className)}.component`].filter(t => !!t).join('/');
+    const classPath = [exportCodePrefix, componentPath, `${(0, _justKebabCase.default)(className)}`, `${(0, _justKebabCase.default)(className)}.${(0, _utils.getCodeExtension)(fileExt)}`].filter(t => !!t).join('/');
     const svgCode = await (0, _core.default)(data, {
       native: true,
       plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']

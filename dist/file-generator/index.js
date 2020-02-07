@@ -7,6 +7,8 @@ exports.default = exportTree;
 
 var _fs = _interopRequireDefault(require("fs"));
 
+var _path = require("path");
+
 var _component = _interopRequireDefault(require("./component"));
 
 var _storybook = _interopRequireDefault(require("./storybook"));
@@ -24,7 +26,7 @@ async function exportTree({
   const {
     storybook: storybookCfg = {},
     exportCode: {
-      template: componentTemplatePath = './src/assets/templates/component.jst',
+      template: componentTemplatePath = (0, _path.resolve)(__dirname, '../assets/templates/component.jst'),
       styles: stylesMode = 'inline'
     }
   } = context;
@@ -34,7 +36,7 @@ async function exportTree({
   });
 
   const {
-    template: storybookTemplatePath = './src/assets/templates/story.jst'
+    template: storybookTemplatePath = (0, _path.resolve)(__dirname, '../assets/templates/story.jst')
   } = storybookCfg;
   const storybookTemplate = storybookCfg ? _fs.default.readFileSync(storybookTemplatePath, {
     encoding: 'utf8'

@@ -21,7 +21,7 @@ function renderProps(props) {
     return [''];
   }
 
-  return [..._lodash.default.keys(props).flatMap(key0 => {
+  return [..._lodash.default.flatMap(_lodash.default.keys(props), key0 => {
     const key = key0.indexOf('-') ? `'${key0}'` : key0;
     const value = (0, _utils.rip0)(props[key0], 1).split('{...props},').join('...props,');
     const hasProps = value.indexOf('...props') >= 0;
@@ -34,16 +34,21 @@ function exportStylesFile(styles, component, {
 }) {
   const {
     exportCode: {
-      path: exportPath,
+      path: exportCodePath,
       stylesExt: ext = 'styles.js'
+    },
+    exportSvgComponents: {
+      path: exportSvgPath
     },
     eol
   } = context;
   const {
     componentName,
-    componentPath
+    componentPath,
+    svgCode
   } = component;
   const componentNameKebab = (0, _justKebabCase.default)(componentName);
+  const exportPath = svgCode ? exportSvgPath : exportCodePath;
   const jsCode = ['module.exports = {', ...renderProps(styles), '}'].join(eol);
   (0, _toFile.default)({
     jsCode,

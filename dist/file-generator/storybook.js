@@ -9,6 +9,8 @@ var _justKebabCase = _interopRequireDefault(require("just-kebab-case"));
 
 var _toFile = _interopRequireDefault(require("./to-file"));
 
+var _utils = require("../utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function exportJSFile(template, component, {
@@ -16,15 +18,17 @@ function exportJSFile(template, component, {
 }) {
   const {
     exportCode: {
-      path: exportCodePath
+      path: exportCodePath,
+      componentExt
     },
     exportSvgComponents: {
-      path: exportSvgPath
+      path: exportSvgPath,
+      fileExt
     },
     storybook: {
       codeSection = 'Components',
       svgSection = 'SVG',
-      fileExt: ext = 'story.js'
+      fileExt: storyExt = 'story.js'
     }
   } = context;
   const {
@@ -34,14 +38,15 @@ function exportJSFile(template, component, {
   } = component;
   const exportPath = svgCode ? exportSvgPath : exportCodePath;
   const storiesSection = svgCode ? svgSection : codeSection;
+  const ext = (0, _utils.getCodeExtension)(svgCode ? fileExt : componentExt);
   const componentNameKebab = (0, _justKebabCase.default)(componentName);
-  const jsCode = template.replace('{{componentPath}}', componentNameKebab).replace('{{storiesOf}}', storiesSection).split('{{componentName}}').join(componentName);
+  const jsCode = template.replace('{{componentPath}}', componentNameKebab).replace('{{storiesOf}}', storiesSection).replace('{{extension}}', ext).split('{{componentName}}').join(componentName);
   (0, _toFile.default)({
     jsCode,
     exportPath,
     componentPath,
     componentNameKebab,
-    ext,
+    ext: storyExt,
     context
   });
 }

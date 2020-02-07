@@ -9,6 +9,7 @@ exports.findNode = findNode;
 exports.findNodeByName = findNodeByName;
 exports.findCanvas = findCanvas;
 exports.isVector = isVector;
+exports.getCodeExtension = getCodeExtension;
 exports.clearStylePosition = clearStylePosition;
 exports.clearStyleSize = clearStyleSize;
 exports.copyStylePosition = copyStylePosition;
@@ -115,6 +116,10 @@ function findCanvas(json, name) {
 
 function isVector(type) {
   return ['VECTOR', 'BOOLEAN_OPERATION', 'STAR', 'LINE', 'ELLIPSE', 'REGULAR_POLYGON'].indexOf(type) >= 0;
+}
+
+function getCodeExtension(extension) {
+  return extension.split('.').slice(0, -1).join('.');
 }
 
 function clearStylePosition() {
@@ -261,10 +266,15 @@ const rc = children => _lodash.default.flatMap(children, ({
 
 exports.rc = rc;
 
-function getInstanceNode(node, props, componentName, componentPath, context) {
+function getInstanceNode(node, props, componentName, componentPath, svgCode, context) {
   const {
     exportCode: {
-      codePrefix
+      codePrefix: codeClassPrefix,
+      componentExt = 'component.js'
+    },
+    exportSvgComponents: {
+      codePrefix: codeSvgPrefix,
+      fileExt = 'component.js'
     }
   } = context;
 
@@ -272,7 +282,9 @@ function getInstanceNode(node, props, componentName, componentPath, context) {
     return node;
   }
 
-  const filePath = [codePrefix, componentPath, `${(0, _justKebabCase.default)(componentName)}`, `${(0, _justKebabCase.default)(componentName)}.component`].filter(t => !!t).join('/');
+  const codePrefix = svgCode ? codeSvgPrefix : codeClassPrefix;
+  const ext = svgCode ? fileExt : componentExt;
+  const filePath = [codePrefix, componentPath, `${(0, _justKebabCase.default)(componentName)}`, `${(0, _justKebabCase.default)(componentName)}.${getCodeExtension(ext)}`].filter(t => !!t).join('/');
   return _objectSpread({}, node, {
     props,
     importCode: [`import ${componentName} from '${filePath}';`],

@@ -67,7 +67,7 @@ function exportJSFile(template, stylesMode, component, {
   let jsCode = svgCode;
 
   if (!jsCode) {
-    const allImportCode = [...(hocsCfg ? hocsCfg.flatMap(({
+    const allImportCode = [...(hocsCfg ? _lodash.default.flatMap(hocsCfg, ({
       import: i
     }) => i) : []), ...(hoc ? [hoc.import] : []), ...collectImports(component), ...(inSeparateFile ? [`import PROPS from './${componentNameKebab}.styles';`] : [])];
     const allHocs = [...(hocsCfg ? hocsCfg.map(({
