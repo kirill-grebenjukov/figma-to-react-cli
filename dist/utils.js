@@ -270,11 +270,11 @@ function getInstanceNode(node, props, componentName, componentPath, svgCode, con
   const {
     exportCode: {
       codePrefix: codeClassPrefix,
-      componentExt = 'component.js'
+      componentExt
     },
     exportSvgComponents: {
       codePrefix: codeSvgPrefix,
-      fileExt = 'component.js'
+      fileExt
     }
   } = context;
 

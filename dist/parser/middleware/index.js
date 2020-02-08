@@ -8,10 +8,15 @@ exports.default = getMiddlewares;
 function getMiddlewares(config) {
   const {
     parser: {
-      engine = 'react-native',
+      engine,
       middlewares: customMiddlewares
     }
   } = config;
+
+  if (!engine) {
+    throw new Error('No engine specified in config');
+  }
+
   let platformMiddlewares = [];
 
   if (engine === 'react-native') {

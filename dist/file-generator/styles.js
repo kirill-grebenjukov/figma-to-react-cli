@@ -35,7 +35,7 @@ function exportStylesFile(styles, component, {
   const {
     exportCode: {
       path: exportCodePath,
-      stylesExt: ext = 'styles.js'
+      stylesExt: ext
     },
     exportSvgComponents: {
       path: exportSvgPath

@@ -46,7 +46,7 @@ function middleware({
 
   const {
     parser: {
-      getFontName = (_, fontPostScriptName) => fontPostScriptName
+      getFontName
     }
   } = context;
   const {

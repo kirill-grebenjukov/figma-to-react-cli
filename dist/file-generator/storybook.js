@@ -26,9 +26,9 @@ function exportJSFile(template, component, {
       fileExt
     },
     storybook: {
-      codeSection = 'Components',
-      svgSection = 'SVG',
-      fileExt: storyExt = 'story.js'
+      codeSection,
+      svgSection,
+      fileExt: storyExt
     }
   } = context;
   const {

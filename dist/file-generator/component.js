@@ -40,11 +40,11 @@ function exportJSFile(template, stylesMode, component, {
   const {
     exportCode: {
       path: exportCodePath,
-      componentExt = 'component.js'
+      componentExt
     },
     exportSvgComponents: {
       path: exportSvgPath,
-      fileExt = 'component.js'
+      fileExt
     },
     eol,
     hocs: hocsCfg
