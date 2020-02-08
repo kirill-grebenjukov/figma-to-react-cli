@@ -22,6 +22,7 @@ const plugin = ({
       return jsCode;
     }
 
+    console.log('eslint: ', componentNameKebab);
     const {
       fixed,
       output,

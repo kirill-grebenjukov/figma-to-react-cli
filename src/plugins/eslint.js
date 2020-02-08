@@ -11,6 +11,8 @@ const plugin = ({ eslintrc }) => {
       return jsCode;
     }
 
+    console.log('eslint: ', componentNameKebab);
+
     const { fixed, output, messages } = linter.verifyAndFix(jsCode, options);
 
     if (!fixed) {
