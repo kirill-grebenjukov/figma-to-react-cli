@@ -25,7 +25,7 @@ export function renderProps(props) {
 
 export default function exportStylesFile(styles, component, { context }) {
   const {
-    exportCode: { path: exportCodePath, stylesExt: ext = 'styles.js' },
+    exportCode: { path: exportCodePath, stylesExt: ext },
     exportSvgComponents: { path: exportSvgPath },
     eol,
   } = context;

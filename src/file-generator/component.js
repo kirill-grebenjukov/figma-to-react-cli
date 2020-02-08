@@ -29,8 +29,8 @@ export default function exportJSFile(
   { context },
 ) {
   const {
-    exportCode: { path: exportCodePath, componentExt = 'component.js' },
-    exportSvgComponents: { path: exportSvgPath, fileExt = 'component.js' },
+    exportCode: { path: exportCodePath, componentExt },
+    exportSvgComponents: { path: exportSvgPath, fileExt },
     eol,
     hocs: hocsCfg,
   } = context;

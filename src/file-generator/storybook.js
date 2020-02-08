@@ -7,11 +7,7 @@ export default function exportJSFile(template, component, { context }) {
   const {
     exportCode: { path: exportCodePath, componentExt },
     exportSvgComponents: { path: exportSvgPath, fileExt },
-    storybook: {
-      codeSection = 'Components',
-      svgSection = 'SVG',
-      fileExt: storyExt = 'story.js',
-    },
+    storybook: { codeSection, svgSection, fileExt: storyExt },
   } = context;
 
   const { componentName, componentPath, svgCode } = component;

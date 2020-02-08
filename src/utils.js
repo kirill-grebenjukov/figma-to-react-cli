@@ -249,11 +249,8 @@ export function getInstanceNode(
   context,
 ) {
   const {
-    exportCode: { codePrefix: codeClassPrefix, componentExt = 'component.js' },
-    exportSvgComponents: {
-      codePrefix: codeSvgPrefix,
-      fileExt = 'component.js',
-    },
+    exportCode: { codePrefix: codeClassPrefix, componentExt },
+    exportSvgComponents: { codePrefix: codeSvgPrefix, fileExt },
   } = context;
 
   if (!componentName) {

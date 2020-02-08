@@ -10,8 +10,10 @@ import parseFigma from './parser';
 import exportFiles from './file-generator';
 import { findCanvas, findNodeByName } from './utils';
 import { STORE_NAME, TEXT_STORE_NAME } from './constants';
+import defaultConfig from './default-config';
 
-const { config } = cosmiconfigSync('figma-to-react-cli').search();
+const { config: cfg } = cosmiconfigSync('figma-to-react-cli').search();
+const config = _.defaultsDeep(cfg, defaultConfig);
 
 const {
   figma: { personalAccessToken, fileKey, pageName },

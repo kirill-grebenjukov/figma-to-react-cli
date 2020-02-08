@@ -28,7 +28,7 @@ export default function middleware({ node, nodeJson, context }) {
   }
 
   const {
-    parser: { getFontName = (_, fontPostScriptName) => fontPostScriptName },
+    parser: { getFontName },
   } = context;
 
   const {
