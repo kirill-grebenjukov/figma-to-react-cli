@@ -10,7 +10,7 @@ module.exports = {
   },
   exportSvgComponents: {
     codePrefix: 'app/src/components',
-    fileExt: 'svg.js'
+    fileExt: 'component.js'
   },
   exportImages: {
     codePrefix: 'app/src/assets/images'
@@ -19,6 +19,6 @@ module.exports = {
   storybook: {
     codeSection: 'UI-Kit',
     svgSection: 'SVG Icons',
-    fileExt: 'story.js'
+    fileExt: 'stories.js'
   }
 };
