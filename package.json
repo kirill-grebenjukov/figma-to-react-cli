@@ -11,7 +11,7 @@
   "author": "MobileRockets",
   "license": "ISC",
   "bin": {
-    "figma-to-react": "./dist/index.js"
+    "figma-to-react": "./dist/cli.js"
   },
   "engines": {
     "node": ">=4"
@@ -22,9 +22,7 @@
     "clean": "rimraf dist",
     "lint": "eslint .",
     "lint:write": "eslint . --fix",
-    "server": "node dist/index",
-    "serve": "nodemon --exec babel-node ./src/index.js",
-    "start": "babel-node ./src/index.js",
+    "start": "babel-node ./src/cli.js",
     "test": "babel-node ./src/test.js"
   },
   "config": {
