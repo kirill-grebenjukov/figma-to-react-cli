@@ -33,7 +33,7 @@ const {
   figma: {
     personalAccessToken,
     fileKey,
-    pageName
+    pageNames
   }
 } = config; // https://www.figma.com/developers/api
 
@@ -49,16 +49,10 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
   }
 }]) => {
   console.log('Getting data from Figma...');
-  const pageJson = pageName ? (0, _utils.findCanvas)(document, pageName) : document;
-
-  if (!pageJson) {
-    console.log('No page/canvas found');
-    return;
-  } // fs.writeFileSync(
+  const pagesJson = pageNames && pageNames.length > 0 ? pageNames.map(nodeName => (0, _utils.findNodeByName)(document, nodeName)) : document.children; // fs.writeFileSync(
   //   `src/assets/tests/${pageJson.name}.json`,
   //   JSON.stringify(pageJson, null, ' '),
   // );
-
 
   console.log('Parsing...');
 
@@ -67,7 +61,7 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
   });
 
   const sourceMap = await (0, _parser.default)({
-    pageJson,
+    pagesJson: pagesJson[0],
     imagesJson,
     settingsJson: _ResponsiveSettings.default,
     context

@@ -39,7 +39,7 @@ const {
   figma: {
     personalAccessToken,
     fileKey,
-    pageName
+    pageNames
   }
 } = config; // https://www.figma.com/developers/api
 
@@ -55,47 +55,52 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
   }
 }]) => {
   console.log('Getting data from Figma...');
-  const pageJson = pageName ? (0, _utils.findCanvas)(document, pageName) : document;
+  const pagesJson = pageNames && pageNames.length > 0 ? pageNames.map(nodeName => (0, _utils.findNodeByName)(document, nodeName)) : document.children;
 
-  if (!pageJson) {
-    console.log(`Can not find page/canvas with name '${pageName}'`);
+  if (!pagesJson || pagesJson.length === 0) {
+    console.log(`Can not find any page/canvas mentioned in ${pageNames}`);
     return;
   }
 
-  const settingsFrame = (0, _utils.findNodeByName)(pageJson, _constants.STORE_NAME);
+  const settingsJson = pagesJson.reduce((sum, pageJson) => {
+    const settingsFrame = (0, _utils.findNodeByName)(pageJson, _constants.STORE_NAME);
 
-  if (!settingsFrame) {
-    console.log(`Can not find Frame with name '${_constants.STORE_NAME}'`);
-    return;
-  }
+    if (!settingsFrame) {
+      console.warn(`Can not find Frame with name '${_constants.STORE_NAME}' inside page '${pageJson.name}'`);
+      return sum;
+    }
 
-  const settingsTextNode = (0, _utils.findNodeByName)(settingsFrame, _constants.TEXT_STORE_NAME);
+    const settingsTextNode = (0, _utils.findNodeByName)(settingsFrame, _constants.TEXT_STORE_NAME);
 
-  if (!settingsTextNode) {
-    console.log(`Can not find TextNode with name '${_constants.TEXT_STORE_NAME}'`);
-    return;
-  }
+    if (!settingsTextNode) {
+      console.warn(`Can not find TextNode with name '${_constants.TEXT_STORE_NAME}' inside page '${pageJson.name}'`);
+      return sum;
+    }
 
-  const settingsText = settingsTextNode.characters;
+    const settingsText = settingsTextNode.characters;
 
-  if (!settingsText) {
-    console.log('TextNode with settings is empty. No reason to proceed.');
-    return;
-  }
+    if (!settingsText) {
+      console.warn(`TextNode with settings is empty inside page '${pageJson.name}'. No reason to process this page.`);
+      return sum;
+    }
 
-  const settingsJson = JSON.parse(settingsText);
+    return _objectSpread({}, sum, JSON.parse(settingsText));
+  }, {});
   console.log('Parsing...');
 
   const context = _objectSpread({}, config, {
     figmaApi
   });
 
-  const sourceMap = await (0, _parser.default)({
-    pageJson,
-    imagesJson,
-    settingsJson,
-    context
-  });
+  const sourceMap = await _bluebird.default.reduce(pagesJson, async (sum, pageJson) => {
+    const map = await (0, _parser.default)({
+      pageJson,
+      imagesJson,
+      settingsJson,
+      context
+    });
+    return _objectSpread({}, sum, map);
+  }, {});
   console.log('Exporting...');
   await (0, _fileGenerator.default)({
     sourceMap,
