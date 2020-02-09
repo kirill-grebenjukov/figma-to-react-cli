@@ -7,7 +7,7 @@ import { cosmiconfigSync } from 'cosmiconfig';
 
 import parseFigma from './parser';
 import exportFiles from './file-generator';
-import { findCanvas } from './utils';
+import { findNodeByName } from './utils';
 
 // import pageJson from '../tests/Responsive.json';
 // import imagesJson from '../tests/Responsive.images.json';
@@ -16,7 +16,7 @@ import settingsJson from '../tests/Responsive.settings.json';
 const { config } = cosmiconfigSync('figma-to-react-cli').search();
 
 const {
-  figma: { personalAccessToken, fileKey, pageName },
+  figma: { personalAccessToken, fileKey, pageNames },
 } = config;
 
 // https://www.figma.com/developers/api
@@ -31,11 +31,11 @@ Promise.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey)])
       },
     ]) => {
       console.log('Getting data from Figma...');
-      const pageJson = pageName ? findCanvas(document, pageName) : document;
-      if (!pageJson) {
-        console.log('No page/canvas found');
-        return;
-      }
+
+      const pagesJson =
+        pageNames && pageNames.length > 0
+          ? pageNames.map(nodeName => findNodeByName(document, nodeName))
+          : document.children;
 
       // fs.writeFileSync(
       //   `src/assets/tests/${pageJson.name}.json`,
@@ -45,7 +45,7 @@ Promise.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey)])
       console.log('Parsing...');
       const context = { ...config, figmaApi };
       const sourceMap = await parseFigma({
-        pageJson,
+        pagesJson: pagesJson[0],
         imagesJson,
         settingsJson,
         context,
