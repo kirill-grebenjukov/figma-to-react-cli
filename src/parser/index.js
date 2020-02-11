@@ -9,11 +9,8 @@ export default async function parsePage({
   settingsJson,
   context,
 }) {
-  const frames = pageJson.children.reduce((sum, child) => {
-    const { id, type } = child;
-    if (type !== 'FRAME') {
-      return sum;
-    }
+  const nodes = pageJson.children.reduce((sum, child) => {
+    const { id } = child;
 
     const settings = settingsJson[id];
     if (settings && settings.dontExport) {
@@ -23,14 +20,17 @@ export default async function parsePage({
     return sum.concat([id]);
   }, []);
 
-  if (frames.length === 0) {
-    throw new Error('No frames found in the page. Nothing to parse.');
+  if (nodes.length === 0) {
+    console.warn(
+      `No nodes found in the page '${pageJson.name}'. Nothing to parse.`,
+    );
+    return {};
   }
 
   const sourceMap = {};
   const middlewares = getMiddlewares(context);
 
-  await Promise.each(frames, frameId =>
+  await Promise.each(nodes, frameId =>
     parseFrame({
       sourceMap,
       middlewares,

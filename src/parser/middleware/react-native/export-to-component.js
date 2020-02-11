@@ -15,7 +15,7 @@ export default async function middleware({
   context,
 }) {
   const { type } = nodeJson;
-  const { componentName, componentPath, props } = node;
+  const { componentName, componentPath, props, svgCode } = node;
 
   // we already handle it inside export-as-image-or-svg middleware
   if (isVector(type)) {
@@ -38,14 +38,26 @@ export default async function middleware({
 
   if (type === 'INSTANCE') {
     const { componentId } = nodeJson;
-    const { componentName: className, componentPath: classPath = '' } =
-      settingsJson[componentId] || {};
+    const {
+      componentName: className,
+      componentPath: classPath = '',
+      exportAs,
+    } = settingsJson[componentId] || {};
 
     if (!className) {
       return node;
     }
 
-    return getInstanceNode(node, instanceProps, className, classPath, context);
+    const isSvg = exportAs === 'svg';
+
+    return getInstanceNode(
+      node,
+      instanceProps,
+      className,
+      classPath,
+      isSvg,
+      context,
+    );
   }
 
   if (componentName) {
@@ -84,6 +96,7 @@ export default async function middleware({
         instanceProps,
         componentName,
         componentPath,
+        svgCode,
         context,
       );
     }

@@ -2,7 +2,12 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 
 import { USE_INSTEAD } from '../constants';
-import { isVector, clearStylePosition, clearStyleSize } from '../utils';
+import {
+  findNode,
+  isVector,
+  clearStylePosition,
+  clearStyleSize,
+} from '../utils';
 
 export default async function parseNode({
   // parent node
@@ -60,13 +65,23 @@ export default async function parseNode({
     };
   }
 
-  const noChildren =
+  let noChildren =
     skipChildren ||
     !childrenJson ||
     mode === USE_INSTEAD ||
-    type === 'INSTANCE' ||
     exportAs ||
     isVector(type);
+
+  if (type === 'INSTANCE') {
+    const { docJson } = context;
+    const { componentId } = nodeJson;
+
+    const component = findNode(docJson, componentId);
+    const { componentName: className } = settingsJson[componentId] || {};
+    if (component && className) {
+      noChildren = true;
+    }
+  }
 
   if (!noChildren) {
     const activeChildrenJson = childrenJson.filter(

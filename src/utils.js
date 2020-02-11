@@ -3,6 +3,10 @@ import _ from 'lodash';
 
 export function sanitizeFileName(value) {
   return value
+    .split('/')
+    .join('')
+    .split('  ')
+    .join(' ')
     .split('.')
     .join('D')
     .split(' ')
@@ -131,6 +135,10 @@ export function copyStylePosition(props, def = {}) {
     right: _.get(props, 'style.right', def.right),
     top: _.get(props, 'style.top', def.top),
     bottom: _.get(props, 'style.bottom', def.bottom),
+    marginLeft: _.get(props, 'style.marginLeft', def.marginLeft),
+    marginRight: _.get(props, 'style.marginRight', def.marginRight),
+    marginTop: _.get(props, 'style.marginTop', def.marginTop),
+    marginBottom: _.get(props, 'style.marginBottom', def.marginBottom),
   };
 }
 
@@ -153,7 +161,7 @@ export function copyStyleSizeOrFlex1(props) {
 
 const cc = v => Math.round(v * 255);
 export const color = ({ r, g, b, a }, opacity = 1) =>
-  `rgba(${cc(r)}, ${cc(g)}, ${cc(b)}, ${cc(a * opacity)})`;
+  `rgba(${cc(r)}, ${cc(g)}, ${cc(b)}, ${a * opacity})`;
 
 export const rip0 = (props, level = 0) => {
   if (_.isNil(props)) {
@@ -236,9 +244,10 @@ export const rip = (props, level = 0, name = null) => {
 };
 
 export const rc = children =>
-  _.flatMap(children, ({ renderCode, props, children: ch }) =>
-    renderCode(props, ch),
-  );
+  _.flatMap(children, child => {
+    const { renderCode, props, children: ch } = child;
+    return renderCode(props, ch, child);
+  });
 
 export function getInstanceNode(
   node,
@@ -268,6 +277,18 @@ export function getInstanceNode(
   ]
     .filter(t => !!t)
     .join('/');
+
+  if (node.renderInstance) {
+    return {
+      ...node,
+      props,
+      importCode: [`import ${componentName} from '${filePath}';`],
+      // eslint-disable-next-line no-shadow
+      renderInstance: props => [
+        `<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`,
+      ],
+    };
+  }
 
   return {
     ...node,

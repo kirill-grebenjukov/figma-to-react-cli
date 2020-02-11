@@ -74,7 +74,7 @@ export default function exportJSFile(
       .split('{{componentName}}')
       .join(componentName)
       .replace('{{import}}', normalizeImports(allImportCode, eol))
-      .replace('{{render}}', renderCode(props, children).join(eol))
+      .replace('{{render}}', renderCode(props, children, component).join(eol))
       .replace('{{styles}}', renderStyles(styles).join(eol))
       .replace(
         '{{export}}',

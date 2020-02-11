@@ -132,13 +132,19 @@ export default async function middleware({
       svgCode,
     };
 
-    res.props = instanceProps;
-    res.importCode = [`import ${className} from '${classPath}';`];
     // eslint-disable-next-line no-shadow
-    res.renderCode = props => [
+    const render = props => [
       `<${className} ${rip(props, 0, `svg-${props.key}`)} />`,
     ];
+
+    res.props = instanceProps;
+    res.importCode = [`import ${className} from '${classPath}';`];
     res.svgCode = svgCode;
+    if (res.renderInstance) {
+      res.renderInstance = render;
+    } else {
+      res.renderCode = render;
+    }
   } else {
     const filePath = `${exportImagesPath}/${fileName}`;
     const importPath = [exportImagesCodePrefix, fileName]
@@ -149,13 +155,20 @@ export default async function middleware({
     fs.writeFileSync(filePath, data);
 
     res.importCode = ["import { Image } from 'react-native';"];
-    res.renderCode = props => [
+
+    const render = props => [
       `<Image source={require('${importPath}')} ${rip(
         props,
         0,
         `image-${props.key}`,
       )} />`,
     ];
+
+    if (res.renderInstance) {
+      res.renderInstance = render;
+    } else {
+      res.renderCode = render;
+    }
   }
 
   return res;

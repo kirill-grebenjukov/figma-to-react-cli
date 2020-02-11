@@ -76,23 +76,14 @@ Promise.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey)])
       console.log('Parsing...');
       const context = { ...config, figmaApi };
 
-      const sourceMap = await Promise.reduce(
-        pagesJson,
-        async (sum, pageJson) => {
-          const map = await parseFigma({
-            pageJson,
-            imagesJson,
-            settingsJson,
-            context,
-          });
-
-          return {
-            ...sum,
-            ...map,
-          };
+      const sourceMap = await parseFigma({
+        pageJson: {
+          children: _.flatMap(pagesJson, ({ children }) => children),
         },
-        {},
-      );
+        imagesJson,
+        settingsJson,
+        context,
+      });
 
       console.log('Exporting...');
       await exportFiles({ sourceMap, context });

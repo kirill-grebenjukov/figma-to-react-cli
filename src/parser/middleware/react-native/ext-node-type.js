@@ -13,7 +13,7 @@ export default function middleware({ node, nodeJson, context }) {
   const { id } = nodeJson;
 
   const { settingsJson } = context;
-  const { extend: { mode, import: extImport, component: extComponent } = {} } =
+  const { extends: { mode, import: extImport, component: extComponent } = {} } =
     settingsJson[id] || {};
 
   const res = { ...node };
@@ -35,7 +35,8 @@ export default function middleware({ node, nodeJson, context }) {
       `<${extComponent} ${rip(props, 0, `node-${props.key}`)} />`,
     ];
   } else if (mode === WRAP_WITH) {
-    res.renderCode = (props, children) => [
+    res.renderInstance = node.renderInstance || node.renderCode;
+    res.renderCode = (props, children, thisNode) => [
       `<${extComponent} ${rip(
         {
           style: {
@@ -46,7 +47,7 @@ export default function middleware({ node, nodeJson, context }) {
         0,
         `node-${props.key}`,
       )}>`,
-      ...node.renderCode(
+      ...thisNode.renderInstance(
         {
           ...props,
           style: {
@@ -55,6 +56,7 @@ export default function middleware({ node, nodeJson, context }) {
           },
         },
         children,
+        thisNode,
       ),
       `</${extComponent}>`,
     ];

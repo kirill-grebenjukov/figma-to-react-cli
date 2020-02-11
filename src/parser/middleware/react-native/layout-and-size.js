@@ -5,6 +5,7 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
   const { frameX, frameY, frameWidth, frameHeight } = context;
 
   const {
+    id,
     type,
     absoluteBoundingBox: { x, y, width, height },
     constraints: { vertical, horizontal },
@@ -25,10 +26,14 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
 
   const left = x - get(parentJson, 'absoluteBoundingBox.x', frameX);
   const top = y - get(parentJson, 'absoluteBoundingBox.y', frameY);
-  const right =
-    get(parentJson, 'absoluteBoundingBox.width', frameWidth) - width - left;
-  const bottom =
-    get(parentJson, 'absoluteBoundingBox.height', frameHeight) - height - top;
+  const parentWidth = get(parentJson, 'absoluteBoundingBox.width', frameWidth);
+  const parentHeight = get(
+    parentJson,
+    'absoluteBoundingBox.height',
+    frameHeight,
+  );
+  const right = parentWidth - width - left;
+  const bottom = parentHeight - height - top;
 
   const hProps = {};
   const vProps = {};
@@ -71,7 +76,17 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
     return {
       ...node,
       importCode: ["import { View } from 'react-native';", ...node.importCode],
-      renderCode: (props, children) => [
+      props: {
+        ...node.props,
+        style: {
+          ...style,
+          ...clearStylePosition(),
+          width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
+          height: vertical === 'TOP_BOTTOM' ? '100%' : height,
+        },
+      },
+      renderInstance: node.renderInstance || node.renderCode,
+      renderCode: (props, children, thisNode) => [
         `<View ${rip(
           {
             style: {
@@ -90,30 +105,34 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           0,
           `container-${props.key}`,
         )}>`,
-        ...node.renderCode(props, children),
+        ...thisNode.renderInstance(props, children, thisNode),
         '</View>',
       ],
-      props: {
-        ...node.props,
-        style: {
-          ...style,
-          ...clearStylePosition(),
-          width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
-          height: vertical === 'TOP_BOTTOM' ? '100%' : height,
-        },
-      },
     };
   }
 
   // tested both: CENTER
   if (horizontal === 'CENTER' || vertical === 'CENTER') {
-    const marginLeft = horizontal === 'CENTER' ? left - (left + right) / 2 : 0;
+    const marginLeft =
+      horizontal === 'CENTER'
+        ? left - (left + parentWidth - width - left) / 2
+        : 0;
     const marginTop = vertical === 'CENTER' ? top - (top + bottom) / 2 : 0;
 
     return {
       ...node,
       importCode: ["import { View } from 'react-native';", ...node.importCode],
-      renderCode: (props, children) => [
+      props: {
+        ...node.props,
+        style: {
+          ...style,
+          ...clearStylePosition(),
+          marginLeft,
+          marginTop,
+        },
+      },
+      renderInstance: node.renderInstance || node.renderCode,
+      renderCode: (props, children, thisNode) => [
         `<View ${rip(
           {
             style: {
@@ -129,18 +148,9 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           0,
           `container-${props.key}`,
         )}>`,
-        ...node.renderCode(props, children),
+        ...thisNode.renderInstance(props, children, thisNode),
         '</View>',
       ],
-      props: {
-        ...node.props,
-        style: {
-          ...style,
-          ...clearStylePosition(),
-          marginLeft,
-          marginTop,
-        },
-      },
     };
   }
 
