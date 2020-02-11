@@ -73,7 +73,7 @@ function exportJSFile(template, stylesMode, component, {
     const allHocs = [...(hocsCfg ? hocsCfg.map(({
       code: hocCode
     }) => hocCode) : []), ...(hoc ? [hoc.code] : [])];
-    jsCode = template.split('{{componentName}}').join(componentName).replace('{{import}}', (0, _import.default)(allImportCode, eol)).replace('{{render}}', renderCode(props, children).join(eol)).replace('{{styles}}', renderStyles(styles).join(eol)).replace('{{export}}', `export default ${allHocs.reverse().reduce((sum, theHoc) => `${theHoc}(${sum})`, componentName)};`);
+    jsCode = template.split('{{componentName}}').join(componentName).replace('{{import}}', (0, _import.default)(allImportCode, eol)).replace('{{render}}', renderCode(props, children, component).join(eol)).replace('{{styles}}', renderStyles(styles).join(eol)).replace('{{export}}', `export default ${allHocs.reverse().reduce((sum, theHoc) => `${theHoc}(${sum})`, componentName)};`);
   }
 
   (0, _toFile.default)({

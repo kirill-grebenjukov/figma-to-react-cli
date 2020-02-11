@@ -28,6 +28,7 @@ function middleware({
     frameHeight
   } = context;
   const {
+    id,
     type,
     absoluteBoundingBox: {
       x,
@@ -53,8 +54,10 @@ function middleware({
 
   const left = x - (0, _get.default)(parentJson, 'absoluteBoundingBox.x', frameX);
   const top = y - (0, _get.default)(parentJson, 'absoluteBoundingBox.y', frameY);
-  const right = (0, _get.default)(parentJson, 'absoluteBoundingBox.width', frameWidth) - width - left;
-  const bottom = (0, _get.default)(parentJson, 'absoluteBoundingBox.height', frameHeight) - height - top;
+  const parentWidth = (0, _get.default)(parentJson, 'absoluteBoundingBox.width', frameWidth);
+  const parentHeight = (0, _get.default)(parentJson, 'absoluteBoundingBox.height', frameHeight);
+  const right = parentWidth - width - left;
+  const bottom = parentHeight - height - top;
   const hProps = {};
   const vProps = {}; // tested: LEFT, RIGHT
 
@@ -95,7 +98,14 @@ function middleware({
   if (horizontal === 'LEFT_RIGHT' || vertical === 'TOP_BOTTOM') {
     return _objectSpread({}, node, {
       importCode: ["import { View } from 'react-native';", ...node.importCode],
-      renderCode: (props, children) => [`<View ${(0, _utils.rip)({
+      props: _objectSpread({}, node.props, {
+        style: _objectSpread({}, style, (0, _utils.clearStylePosition)(), {
+          width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
+          height: vertical === 'TOP_BOTTOM' ? '100%' : height
+        })
+      }),
+      renderInstance: node.renderInstance || node.renderCode,
+      renderCode: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
         style: _objectSpread({
           position: 'absolute',
           width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
@@ -107,23 +117,24 @@ function middleware({
           paddingBottom: vertical === 'TOP_BOTTOM' ? bottom : undefined // backgroundColor: node.id === '102:30' ? 'lime' : undefined,
 
         })
-      }, 0, `container-${props.key}`)}>`, ...node.renderCode(props, children), '</View>'],
-      props: _objectSpread({}, node.props, {
-        style: _objectSpread({}, style, (0, _utils.clearStylePosition)(), {
-          width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
-          height: vertical === 'TOP_BOTTOM' ? '100%' : height
-        })
-      })
+      }, 0, `container-${props.key}`)}>`, ...thisNode.renderInstance(props, children, thisNode), '</View>']
     });
   } // tested both: CENTER
 
 
   if (horizontal === 'CENTER' || vertical === 'CENTER') {
-    const marginLeft = horizontal === 'CENTER' ? left - (left + right) / 2 : 0;
+    const marginLeft = horizontal === 'CENTER' ? left - (left + parentWidth - width - left) / 2 : 0;
     const marginTop = vertical === 'CENTER' ? top - (top + bottom) / 2 : 0;
     return _objectSpread({}, node, {
       importCode: ["import { View } from 'react-native';", ...node.importCode],
-      renderCode: (props, children) => [`<View ${(0, _utils.rip)({
+      props: _objectSpread({}, node.props, {
+        style: _objectSpread({}, style, (0, _utils.clearStylePosition)(), {
+          marginLeft,
+          marginTop
+        })
+      }),
+      renderInstance: node.renderInstance || node.renderCode,
+      renderCode: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
         style: _objectSpread({
           position: 'absolute',
           width: horizontal === 'CENTER' ? '100%' : width,
@@ -132,13 +143,7 @@ function middleware({
           justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
           alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start'
         })
-      }, 0, `container-${props.key}`)}>`, ...node.renderCode(props, children), '</View>'],
-      props: _objectSpread({}, node.props, {
-        style: _objectSpread({}, style, (0, _utils.clearStylePosition)(), {
-          marginLeft,
-          marginTop
-        })
-      })
+      }, 0, `container-${props.key}`)}>`, ...thisNode.renderInstance(props, children, thisNode), '</View>']
     });
   }
 

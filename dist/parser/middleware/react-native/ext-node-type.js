@@ -29,7 +29,7 @@ function middleware({
     settingsJson
   } = context;
   const {
-    extend: {
+    extends: {
       mode,
       import: extImport,
       component: extComponent
@@ -49,11 +49,13 @@ function middleware({
   } else if (mode === _constants.USE_INSTEAD) {
     res.renderCode = props => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)} />`];
   } else if (mode === _constants.WRAP_WITH) {
-    res.renderCode = (props, children) => [`<${extComponent} ${(0, _utils.rip)({
+    res.renderInstance = node.renderInstance || node.renderCode;
+
+    res.renderCode = (props, children, thisNode) => [`<${extComponent} ${(0, _utils.rip)({
       style: _objectSpread({}, (0, _utils.copyStylePosition)(props), (0, _utils.copyStyleSize)(props))
-    }, 0, `node-${props.key}`)}>`, ...node.renderCode(_objectSpread({}, props, {
+    }, 0, `node-${props.key}`)}>`, ...thisNode.renderInstance(_objectSpread({}, props, {
       style: _objectSpread({}, (0, _get.default)(props, 'style'), (0, _utils.clearStylePosition)())
-    }), children), `</${extComponent}>`];
+    }), children, thisNode), `</${extComponent}>`];
   }
 
   return res;

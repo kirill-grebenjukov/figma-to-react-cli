@@ -92,15 +92,16 @@ _bluebird.default.all([figmaApi.getFile(fileKey), figmaApi.getImageFills(fileKey
     figmaApi
   });
 
-  const sourceMap = await _bluebird.default.reduce(pagesJson, async (sum, pageJson) => {
-    const map = await (0, _parser.default)({
-      pageJson,
-      imagesJson,
-      settingsJson,
-      context
-    });
-    return _objectSpread({}, sum, map);
-  }, {});
+  const sourceMap = await (0, _parser.default)({
+    pageJson: {
+      children: _lodash.default.flatMap(pagesJson, ({
+        children
+      }) => children)
+    },
+    imagesJson,
+    settingsJson,
+    context
+  });
   console.log('Exporting...');
   await (0, _fileGenerator.default)({
     sourceMap,

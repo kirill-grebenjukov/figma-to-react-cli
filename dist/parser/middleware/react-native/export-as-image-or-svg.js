@@ -128,13 +128,19 @@ async function middleware({
       importCode: [],
       renderCode: () => [],
       svgCode
-    });
+    }); // eslint-disable-next-line no-shadow
+
+    const render = props => [`<${className} ${(0, _utils.rip)(props, 0, `svg-${props.key}`)} />`];
+
     res.props = instanceProps;
-    res.importCode = [`import ${className} from '${classPath}';`]; // eslint-disable-next-line no-shadow
-
-    res.renderCode = props => [`<${className} ${(0, _utils.rip)(props, 0, `svg-${props.key}`)} />`];
-
+    res.importCode = [`import ${className} from '${classPath}';`];
     res.svgCode = svgCode;
+
+    if (res.renderInstance) {
+      res.renderInstance = render;
+    } else {
+      res.renderCode = render;
+    }
   } else {
     const filePath = `${exportImagesPath}/${fileName}`;
     const importPath = [exportImagesCodePrefix, fileName].filter(t => !!t).join('/');
@@ -147,7 +153,13 @@ async function middleware({
 
     res.importCode = ["import { Image } from 'react-native';"];
 
-    res.renderCode = props => [`<Image source={require('${importPath}')} ${(0, _utils.rip)(props, 0, `image-${props.key}`)} />`];
+    const render = props => [`<Image source={require('${importPath}')} ${(0, _utils.rip)(props, 0, `image-${props.key}`)} />`];
+
+    if (res.renderInstance) {
+      res.renderInstance = render;
+    } else {
+      res.renderCode = render;
+    }
   }
 
   return res;

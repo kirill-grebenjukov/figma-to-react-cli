@@ -29,7 +29,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function sanitizeFileName(value) {
-  return value.split('.').join('D').split(' ').join('S').split(':').join('C').split(';').join('Z');
+  return value.split('/').join('').split('  ').join(' ').split('.').join('D').split(' ').join('S').split(':').join('C').split(';').join('Z');
 }
 
 function sanitizeText(value) {
@@ -145,7 +145,11 @@ function copyStylePosition(props, def = {}) {
     left: _lodash.default.get(props, 'style.left', def.left),
     right: _lodash.default.get(props, 'style.right', def.right),
     top: _lodash.default.get(props, 'style.top', def.top),
-    bottom: _lodash.default.get(props, 'style.bottom', def.bottom)
+    bottom: _lodash.default.get(props, 'style.bottom', def.bottom),
+    marginLeft: _lodash.default.get(props, 'style.marginLeft', def.marginLeft),
+    marginRight: _lodash.default.get(props, 'style.marginRight', def.marginRight),
+    marginTop: _lodash.default.get(props, 'style.marginTop', def.marginTop),
+    marginBottom: _lodash.default.get(props, 'style.marginBottom', def.marginBottom)
   };
 }
 
@@ -175,7 +179,7 @@ const color = ({
   g,
   b,
   a
-}, opacity = 1) => `rgba(${cc(r)}, ${cc(g)}, ${cc(b)}, ${cc(a * opacity)})`;
+}, opacity = 1) => `rgba(${cc(r)}, ${cc(g)}, ${cc(b)}, ${a * opacity})`;
 
 exports.color = color;
 
@@ -258,11 +262,14 @@ const rip = (props, level = 0, name = null) => {
 
 exports.rip = rip;
 
-const rc = children => _lodash.default.flatMap(children, ({
-  renderCode,
-  props,
-  children: ch
-}) => renderCode(props, ch));
+const rc = children => _lodash.default.flatMap(children, child => {
+  const {
+    renderCode,
+    props,
+    children: ch
+  } = child;
+  return renderCode(props, ch, child);
+});
 
 exports.rc = rc;
 
@@ -285,6 +292,16 @@ function getInstanceNode(node, props, componentName, componentPath, svgCode, con
   const codePrefix = svgCode ? codeSvgPrefix : codeClassPrefix;
   const ext = svgCode ? fileExt : componentExt;
   const filePath = [codePrefix, componentPath, `${(0, _justKebabCase.default)(componentName)}`, `${(0, _justKebabCase.default)(componentName)}.${getCodeExtension(ext)}`].filter(t => !!t).join('/');
+
+  if (node.renderInstance) {
+    return _objectSpread({}, node, {
+      props,
+      importCode: [`import ${componentName} from '${filePath}';`],
+      // eslint-disable-next-line no-shadow
+      renderInstance: props => [`<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`]
+    });
+  }
+
   return _objectSpread({}, node, {
     props,
     importCode: [`import ${componentName} from '${filePath}';`],

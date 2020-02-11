@@ -19,16 +19,10 @@ async function parsePage({
   settingsJson,
   context
 }) {
-  const frames = pageJson.children.reduce((sum, child) => {
+  const nodes = pageJson.children.reduce((sum, child) => {
     const {
-      id,
-      type
+      id
     } = child;
-
-    if (type !== 'FRAME') {
-      return sum;
-    }
-
     const settings = settingsJson[id];
 
     if (settings && settings.dontExport) {
@@ -38,13 +32,14 @@ async function parsePage({
     return sum.concat([id]);
   }, []);
 
-  if (frames.length === 0) {
-    throw new Error('No frames found in the page. Nothing to parse.');
+  if (nodes.length === 0) {
+    console.warn(`No nodes found in the page '${pageJson.name}'. Nothing to parse.`);
+    return {};
   }
 
   const sourceMap = {};
   const middlewares = (0, _middleware.default)(context);
-  await _bluebird.default.each(frames, frameId => (0, _parseFrame.default)({
+  await _bluebird.default.each(nodes, frameId => (0, _parseFrame.default)({
     sourceMap,
     middlewares,
     frameId,

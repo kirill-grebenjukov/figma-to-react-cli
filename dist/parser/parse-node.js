@@ -84,7 +84,24 @@ async function parseNode({
     });
   }
 
-  const noChildren = skipChildren || !childrenJson || mode === _constants.USE_INSTEAD || type === 'INSTANCE' || exportAs || (0, _utils.isVector)(type);
+  let noChildren = skipChildren || !childrenJson || mode === _constants.USE_INSTEAD || exportAs || (0, _utils.isVector)(type);
+
+  if (type === 'INSTANCE') {
+    const {
+      docJson
+    } = context;
+    const {
+      componentId
+    } = nodeJson;
+    const component = (0, _utils.findNode)(docJson, componentId);
+    const {
+      componentName: className
+    } = settingsJson[componentId] || {};
+
+    if (component && className) {
+      noChildren = true;
+    }
+  }
 
   if (!noChildren) {
     const activeChildrenJson = childrenJson.filter(({

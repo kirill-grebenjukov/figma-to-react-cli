@@ -24,7 +24,8 @@ async function middleware({
   const {
     componentName,
     componentPath,
-    props
+    props,
+    svgCode
   } = node; // we already handle it inside export-as-image-or-svg middleware
 
   if ((0, _utils.isVector)(type)) {
@@ -49,14 +50,16 @@ async function middleware({
     } = nodeJson;
     const {
       componentName: className,
-      componentPath: classPath = ''
+      componentPath: classPath = '',
+      exportAs
     } = settingsJson[componentId] || {};
 
     if (!className) {
       return node;
     }
 
-    return (0, _utils.getInstanceNode)(node, instanceProps, className, classPath, context);
+    const isSvg = exportAs === 'svg';
+    return (0, _utils.getInstanceNode)(node, instanceProps, className, classPath, isSvg, context);
   }
 
   if (componentName) {
@@ -82,7 +85,7 @@ async function middleware({
     // no parent means that this is a top level component (screen/scene)
 
     if (parentNode) {
-      return (0, _utils.getInstanceNode)(node, instanceProps, componentName, componentPath, context);
+      return (0, _utils.getInstanceNode)(node, instanceProps, componentName, componentPath, svgCode, context);
     } // else return node;
 
   }
