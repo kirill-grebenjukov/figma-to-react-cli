@@ -39,7 +39,7 @@ function _default({
 
   const filePath = _path.default.join(fileDir, `${componentNameKebab}.${ext}`);
 
-  console.log(`    ${filePath}`);
+  console.log(`  => ${filePath}`);
 
   _fs.default.writeFileSync(filePath, code, {
     encoding: 'utf8'
