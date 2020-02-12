@@ -28,7 +28,7 @@ export default function({
 
   const filePath = path.join(fileDir, `${componentNameKebab}.${ext}`);
 
-  console.log(`    ${filePath}`);
+  console.log(`  => ${filePath}`);
 
   fs.writeFileSync(filePath, code, {
     encoding: 'utf8',
