@@ -27,6 +27,9 @@ export default function({
   fs.mkdirSync(fileDir, { recursive: true });
 
   const filePath = path.join(fileDir, `${componentNameKebab}.${ext}`);
+
+  console.log(`    ${filePath}`);
+
   fs.writeFileSync(filePath, code, {
     encoding: 'utf8',
   });
