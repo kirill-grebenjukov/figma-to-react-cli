@@ -43,7 +43,7 @@ async function exportTree({
   }) : null;
   Object.keys(sourceMap).forEach(key => {
     const node = sourceMap[key];
-    console.log(`  [${key}] ${node.name}`);
+    console.log(`\n### [${node.key}] '${node.name}' -> ${key}`);
     const extractStyles = ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
     const styles = extractStyles ? {} : null;
     (0, _utils.initGlobProps)(styles);

@@ -1,6 +1,6 @@
 {
   "name": "figma-to-react-cli",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Transform Figma UI into React/React-native components",
   "main": "dist/index.js",
   "keywords": [
