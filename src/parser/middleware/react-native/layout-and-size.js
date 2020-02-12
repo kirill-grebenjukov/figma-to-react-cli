@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { rip, clearStylePosition } from '../../../utils';
+import { rip, clearStylePosition, copyStyleSize } from '../../../utils';
 
 export default function middleware({ parentJson, node, nodeJson, context }) {
   const { frameX, frameY, frameWidth, frameHeight } = context;
@@ -148,7 +148,17 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           0,
           `container-${props.key}`,
         )}>`,
+        `<View ${rip(
+          {
+            style: {
+              ...copyStyleSize(props),
+            },
+          },
+          0,
+          `inner-container-${props.key}`,
+        )}>`,
         ...thisNode.renderInstance(props, children, thisNode),
+        '</View>',
         '</View>',
       ],
     };
