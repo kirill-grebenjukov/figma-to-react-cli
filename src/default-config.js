@@ -19,4 +19,6 @@ module.exports = {
     svgSection: 'SVG Icons',
     fileExt: 'stories.js',
   },
+  blacklist: [],
+  whitelist: [],
 };
