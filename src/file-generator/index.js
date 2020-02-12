@@ -36,7 +36,7 @@ export default async function exportTree({ context, sourceMap }) {
   Object.keys(sourceMap).forEach(key => {
     const node = sourceMap[key];
 
-    console.log(`  [${key}] ${node.name}`);
+    console.log(`\n### [${node.key}] '${node.name}' -> ${key}`);
 
     const extractStyles =
       ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
