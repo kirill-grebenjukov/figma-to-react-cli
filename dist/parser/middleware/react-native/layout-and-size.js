@@ -143,7 +143,9 @@ function middleware({
           justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
           alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start'
         })
-      }, 0, `container-${props.key}`)}>`, ...thisNode.renderInstance(props, children, thisNode), '</View>']
+      }, 0, `container-${props.key}`)}>`, `<View ${(0, _utils.rip)({
+        style: _objectSpread({}, (0, _utils.copyStyleSize)(props))
+      }, 0, `inner-container-${props.key}`)}>`, ...thisNode.renderInstance(props, children, thisNode), '</View>', '</View>']
     });
   }
 

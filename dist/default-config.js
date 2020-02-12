@@ -20,5 +20,7 @@ module.exports = {
     codeSection: 'UI-Kit',
     svgSection: 'SVG Icons',
     fileExt: 'stories.js'
-  }
+  },
+  blacklist: [],
+  whitelist: []
 };

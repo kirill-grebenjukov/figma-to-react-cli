@@ -34,7 +34,9 @@ async function parseNode({
     parser: {
       defaultComponent
     },
-    settingsJson
+    settingsJson,
+    whitelist,
+    blacklist
   } = context;
   const {
     id,
@@ -42,6 +44,12 @@ async function parseNode({
     type,
     children: childrenJson
   } = nodeJson;
+  const blackOrWhiteListed = _lodash.default.isArray(whitelist) && whitelist.length > 0 && whitelist.indexOf(name) < 0 && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0);
+
+  if (blackOrWhiteListed) {
+    return null;
+  }
+
   const {
     // should we add `flex: 1` to the component style
     // we need it for parent (screen) components to occupy all the available space
