@@ -36,27 +36,29 @@ async function exportTree({
   });
 
   const {
-    template: storybookTemplatePath = (0, _path.resolve)(__dirname, '../assets/templates/story.jst')
+    template: storybookTemplatePath = (0, _path.resolve)(__dirname, '../assets/templates/stories.jst')
   } = storybookCfg;
   const storybookTemplate = storybookCfg ? _fs.default.readFileSync(storybookTemplatePath, {
     encoding: 'utf8'
   }) : null;
   Object.keys(sourceMap).forEach(key => {
+    const node = sourceMap[key];
+    console.log(`  [${key}] ${node.name}`);
     const extractStyles = ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
     const styles = extractStyles ? {} : null;
     (0, _utils.initGlobProps)(styles);
-    (0, _component.default)(componentTemplate, stylesMode, sourceMap[key], {
+    (0, _component.default)(componentTemplate, stylesMode, node, {
       context
     });
 
     if (stylesMode === 'in-styles-file' && styles) {
-      (0, _styles.default)(styles, sourceMap[key], {
+      (0, _styles.default)(styles, node, {
         context
       });
     }
 
     if (storybookCfg) {
-      (0, _storybook.default)(storybookTemplate, sourceMap[key], {
+      (0, _storybook.default)(storybookTemplate, node, {
         context
       });
     }
