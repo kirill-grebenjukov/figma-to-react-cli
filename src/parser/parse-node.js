@@ -30,13 +30,14 @@ export default async function parseNode({
   const { id, name, type, children: childrenJson } = nodeJson;
 
   const blackOrWhiteListed =
-    (_.isArray(whitelist) &&
+    !parentJson &&
+    ((_.isArray(whitelist) &&
       whitelist.length > 0 &&
       whitelist.indexOf(name) < 0 &&
       whitelist.indexOf(id) < 0) ||
-    (_.isArray(blacklist) &&
-      blacklist.length > 0 &&
-      (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0));
+      (_.isArray(blacklist) &&
+        blacklist.length > 0 &&
+        (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0)));
 
   if (blackOrWhiteListed) {
     return null;
@@ -57,12 +58,14 @@ export default async function parseNode({
     // hoc
     hoc,
     // extend by an existing component
-    extend: { mode } = {},
+    extends: extend,
   } = settingsJson[id] || {};
 
   if (dontExport) {
     return null;
   }
+
+  const { mode } = extend || {};
 
   let node = null;
   // if parentNode is null then we are at the frame level or
@@ -77,6 +80,7 @@ export default async function parseNode({
       children: null,
       props: { key: id },
       hoc,
+      extends: extend,
     };
   }
 

@@ -44,13 +44,7 @@ export default function middleware({ node, nodeJson }) {
         0,
         `gradient-background-${props.key}`,
       )}>`,
-      ...node.renderCode(
-        {
-          ...props,
-          style: { flex: 1 },
-        },
-        children,
-      ),
+      ...node.renderCode(props, children),
       '</LinearGradient>',
     ],
   };
