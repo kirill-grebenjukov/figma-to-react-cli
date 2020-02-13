@@ -1,11 +1,11 @@
-import get from 'lodash/get';
+import _ from 'lodash';
 import { rip, clearStylePosition, copyStyleSize } from '../../../utils';
 
 export default function middleware({ parentJson, node, nodeJson, context }) {
   const { frameX, frameY, frameWidth, frameHeight } = context;
 
   const {
-    id,
+    name,
     type,
     absoluteBoundingBox: { x, y, width, height },
     constraints: { vertical, horizontal },
@@ -17,17 +17,21 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
       props: {
         ...node.props,
         style: {
-          ...get(node, 'props.style'),
+          ..._.get(node, 'props.style'),
           flex: 1,
         },
       },
     };
   }
 
-  const left = x - get(parentJson, 'absoluteBoundingBox.x', frameX);
-  const top = y - get(parentJson, 'absoluteBoundingBox.y', frameY);
-  const parentWidth = get(parentJson, 'absoluteBoundingBox.width', frameWidth);
-  const parentHeight = get(
+  const left = x - _.get(parentJson, 'absoluteBoundingBox.x', frameX);
+  const top = y - _.get(parentJson, 'absoluteBoundingBox.y', frameY);
+  const parentWidth = _.get(
+    parentJson,
+    'absoluteBoundingBox.width',
+    frameWidth,
+  );
+  const parentHeight = _.get(
     parentJson,
     'absoluteBoundingBox.height',
     frameHeight,
@@ -62,9 +66,14 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
     // do nothing
   }
 
+  const position =
+    _.keys(hProps).length > 0 || _.keys(vProps).length > 0
+      ? 'absolute'
+      : undefined;
+
   const style = {
-    ...get(node, 'props.style'),
-    position: 'absolute',
+    ..._.get(node, 'props.style'),
+    position,
     width,
     height,
     ...hProps,
@@ -75,7 +84,6 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
   if (horizontal === 'LEFT_RIGHT' || vertical === 'TOP_BOTTOM') {
     return {
       ...node,
-      importCode: ["import { View } from 'react-native';", ...node.importCode],
       props: {
         ...node.props,
         style: {
@@ -85,16 +93,20 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           height: vertical === 'TOP_BOTTOM' ? '100%' : height,
         },
       },
-      renderInstance: node.renderInstance || node.renderCode,
-      renderCode: (props, children, thisNode) => [
+      importDecorator: _.concat(
+        ["import { View } from 'react-native';"],
+        node.importCode,
+      ),
+      renderDecorator2: node.renderDecorator,
+      renderDecorator: (props, children, thisNode) => [
         `<View ${rip(
           {
             style: {
-              position: 'absolute',
               width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
               height: vertical === 'TOP_BOTTOM' ? '100%' : height,
               ...hProps,
               ...vProps,
+              position,
               paddingLeft: horizontal === 'LEFT_RIGHT' ? left : undefined,
               paddingRight: horizontal === 'LEFT_RIGHT' ? right : undefined,
               paddingTop: vertical === 'TOP_BOTTOM' ? top : undefined,
@@ -105,7 +117,11 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           0,
           `container-${props.key}`,
         )}>`,
-        ...thisNode.renderInstance(props, children, thisNode),
+        ...(thisNode.renderDecorator2 || thisNode.renderComponent)(
+          props,
+          children,
+          thisNode,
+        ),
         '</View>',
       ],
     };
@@ -121,7 +137,6 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
 
     return {
       ...node,
-      importCode: ["import { View } from 'react-native';", ...node.importCode],
       props: {
         ...node.props,
         style: {
@@ -131,16 +146,20 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           marginTop,
         },
       },
-      renderInstance: node.renderInstance || node.renderCode,
-      renderCode: (props, children, thisNode) => [
+      importDecorator: _.concat(
+        ["import { View } from 'react-native';"],
+        node.importDecorator,
+      ),
+      renderDecorator2: node.renderDecorator,
+      renderDecorator: (props, children, thisNode) => [
         `<View ${rip(
           {
             style: {
-              position: 'absolute',
               width: horizontal === 'CENTER' ? '100%' : width,
               height: vertical === 'CENTER' ? '100%' : height,
               ...hProps,
               ...vProps,
+              position,
               justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
               alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
             },
@@ -155,9 +174,13 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
             },
           },
           0,
-          `inner-container-${props.key}`,
+          `placeholder-${props.key}`,
         )}>`,
-        ...thisNode.renderInstance(props, children, thisNode),
+        ...(thisNode.renderDecorator2 || thisNode.renderComponent)(
+          props,
+          children,
+          thisNode,
+        ),
         '</View>',
         '</View>',
       ],

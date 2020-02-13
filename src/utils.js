@@ -186,9 +186,12 @@ export const rip0 = (props, level = 0) => {
         .filter(key => !_.isNil(props[key]))
         .sort((a, b) => {
           if (a === 'first:prop') return -1;
-          if (a === 'last:prop') return 1;
+          if (b === 'first:prop') return 1;
 
-          return a.localeCompare(b);
+          if (a === 'last:prop') return 1;
+          if (b === 'last:prop') return -1;
+
+          return 0;
         })
         .map(key => {
           if (key === 'first:prop' || key === 'last:prop') {
@@ -201,12 +204,16 @@ export const rip0 = (props, level = 0) => {
         })
         .join(', ')}}`;
     }
+
     return `${_.keys(props)
       .sort((a, b) => {
         if (a === 'first:prop') return -1;
-        if (a === 'last:prop') return 1;
+        if (b === 'first:prop') return 1;
 
-        return a.localeCompare(b);
+        if (a === 'last:prop') return 1;
+        if (b === 'last:prop') return -1;
+
+        return 0;
       })
       .map(key => {
         const value = props[key];
@@ -245,7 +252,9 @@ export const rip = (props, level = 0, name = null) => {
 
 export const rc = children =>
   _.flatMap(children, child => {
-    const { renderCode, props, children: ch } = child;
+    const { renderDecorator, renderComponent, props, children: ch } = child;
+    const renderCode = renderDecorator || renderComponent;
+
     return renderCode(props, ch, child);
   });
 
@@ -278,24 +287,12 @@ export function getInstanceNode(
     .filter(t => !!t)
     .join('/');
 
-  if (node.renderInstance) {
-    return {
-      ...node,
-      props,
-      importCode: [`import ${componentName} from '${filePath}';`],
-      // eslint-disable-next-line no-shadow
-      renderInstance: props => [
-        `<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`,
-      ],
-    };
-  }
-
   return {
     ...node,
     props,
-    importCode: [`import ${componentName} from '${filePath}';`],
+    importComponent: [`import ${componentName} from '${filePath}';`],
     // eslint-disable-next-line no-shadow
-    renderCode: props => [
+    renderComponent: props => [
       `<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`,
     ],
   };

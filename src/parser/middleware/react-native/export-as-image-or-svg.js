@@ -78,8 +78,6 @@ export default async function middleware({
     id,
   )}.${format}`;
 
-  const res = { ...node };
-
   if (format === 'svg') {
     const className =
       componentName || camelCase(fileName, { pascalCase: true });
@@ -127,49 +125,40 @@ export default async function middleware({
       componentName: className,
       componentPath,
       props: componentProps,
-      importCode: [],
-      renderCode: () => [],
+      importComponent: [],
+      renderComponent: () => [],
       svgCode,
     };
 
-    // eslint-disable-next-line no-shadow
-    const render = props => [
-      `<${className} ${rip(props, 0, `svg-${props.key}`)} />`,
-    ];
+    return {
+      ...node,
+      svgCode,
+      props: instanceProps,
+      importComponent: [`import ${className} from '${classPath}';`],
+      // eslint-disable-next-line no-shadow
+      renderComponent: props => [
+        `<${className} ${rip(props, 0, `svg-${props.key}`)} />`,
+      ],
+    };
+  }
 
-    res.props = instanceProps;
-    res.importCode = [`import ${className} from '${classPath}';`];
-    res.svgCode = svgCode;
-    if (res.renderInstance) {
-      res.renderInstance = render;
-    } else {
-      res.renderCode = render;
-    }
-  } else {
-    const filePath = `${exportImagesPath}/${fileName}`;
-    const importPath = [exportImagesCodePrefix, fileName]
-      .filter(t => !!t)
-      .join('/');
+  const filePath = `${exportImagesPath}/${fileName}`;
+  const importPath = [exportImagesCodePrefix, fileName]
+    .filter(t => !!t)
+    .join('/');
 
-    fs.mkdirSync(exportImagesPath, { recursive: true });
-    fs.writeFileSync(filePath, data);
+  fs.mkdirSync(exportImagesPath, { recursive: true });
+  fs.writeFileSync(filePath, data);
 
-    res.importCode = ["import { Image } from 'react-native';"];
-
-    const render = props => [
+  return {
+    ...node,
+    importComponent: ["import { Image } from 'react-native';"],
+    renderComponent: props => [
       `<Image source={require('${importPath}')} ${rip(
         props,
         0,
         `image-${props.key}`,
       )} />`,
-    ];
-
-    if (res.renderInstance) {
-      res.renderInstance = render;
-    } else {
-      res.renderCode = render;
-    }
-  }
-
-  return res;
+    ],
+  };
 }
