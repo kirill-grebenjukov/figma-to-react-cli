@@ -4,6 +4,7 @@ import layoutAndSize from './layout-and-size';
 
 import border from './border';
 import opacity from './opacity';
+import clipsContent from './clips-content';
 
 import backgroundSolid from './background-solid';
 import backgroundImage from './background-image';
@@ -22,6 +23,7 @@ const middlewares = [
   backgroundLinearGradient,
   border,
   opacity,
+  clipsContent,
   textStyles,
   layoutAndSize,
   exportAsImageOrSVG,
