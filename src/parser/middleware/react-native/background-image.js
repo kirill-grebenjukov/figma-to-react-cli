@@ -1,6 +1,6 @@
 import fs from 'fs';
 import axios from 'axios';
-import get from 'lodash/get';
+import _ from 'lodash';
 
 import {
   rip,
@@ -58,8 +58,11 @@ export default async function middleware({ node, nodeJson, context }) {
 
   return {
     ...node,
-    importCode: ["import { ImageBackground } from 'react-native';"],
-    renderCode: (props, children) => [
+    importComponent: _.concat(
+      ["import { ImageBackground } from 'react-native';"],
+      node.importComponent,
+    ),
+    renderComponent: (props, children) => [
       `<ImageBackground source={require('${exportImagesCodePrefix}/${fileName}')} ${rip(
         {
           resizeMode: resizeModes[scaleMode],
@@ -72,11 +75,11 @@ export default async function middleware({ node, nodeJson, context }) {
         0,
         `background-${props.key}`,
       )}>`,
-      ...node.renderCode(
+      ...node.renderComponent(
         {
           ...props,
           style: {
-            ...get(props, 'style'),
+            ..._.get(props, 'style'),
             ...clearStylePosition(),
           },
         },

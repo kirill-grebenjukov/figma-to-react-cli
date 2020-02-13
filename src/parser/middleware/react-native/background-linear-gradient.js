@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import _ from 'lodash';
 
 import { rip, color } from '../../../utils';
 
@@ -28,12 +28,15 @@ export default function middleware({ node, nodeJson }) {
 
   return {
     ...node,
-    importCode: ["import LinearGradient from 'react-native-linear-gradient';"],
-    renderCode: (props, children) => [
+    importComponent: _.concat(
+      ["import LinearGradient from 'react-native-linear-gradient';"],
+      node.importComponent,
+    ),
+    renderComponent: (props, children) => [
       `<LinearGradient ${rip(
         {
           style: {
-            ...get(props, 'style'),
+            ..._.get(props, 'style'),
             opacity,
           },
           start,
@@ -44,7 +47,7 @@ export default function middleware({ node, nodeJson }) {
         0,
         `gradient-background-${props.key}`,
       )}>`,
-      ...node.renderCode(props, children),
+      ...node.renderComponent(props, children),
       '</LinearGradient>',
     ],
   };

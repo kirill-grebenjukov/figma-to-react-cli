@@ -7,9 +7,10 @@ import { renderProps } from './styles';
 
 import toFile from './to-file';
 
-function collectImports({ importCode, children }) {
+function collectImports({ importDecorator, importComponent, children }) {
   return _.concat(
-    importCode || [],
+    importDecorator || [],
+    importComponent || [],
     _.flatMap(children || [], child => collectImports(child)),
   );
 }
@@ -38,12 +39,15 @@ export default function exportJSFile(
   const {
     componentName,
     componentPath,
-    renderCode,
+    renderDecorator,
+    renderComponent,
     children,
     props,
     hoc,
     svgCode,
   } = component;
+
+  const renderCode = renderDecorator || renderComponent;
 
   const exportPath = svgCode ? exportSvgPath : exportCodePath;
   const ext = svgCode ? fileExt : componentExt;

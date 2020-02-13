@@ -44,9 +44,6 @@ export default async function parseNode({
   }
 
   const {
-    // should we add `flex: 1` to the component style
-    // we need it for parent (screen) components to occupy all the available space
-    stretch = false,
     // don't export component completely
     dontExport = false,
     // parse component but skip its children
@@ -58,14 +55,12 @@ export default async function parseNode({
     // hoc
     hoc,
     // extend by an existing component
-    extends: extend,
+    extend,
   } = settingsJson[id] || {};
 
   if (dontExport) {
     return null;
   }
-
-  const { mode } = extend || {};
 
   let node = null;
   // if parentNode is null then we are at the frame level or
@@ -80,9 +75,11 @@ export default async function parseNode({
       children: null,
       props: { key: id },
       hoc,
-      extends: extend,
+      extend,
     };
   }
+
+  const { mode } = extend || {};
 
   let noChildren =
     skipChildren ||
@@ -140,18 +137,6 @@ export default async function parseNode({
         }),
       node,
     );
-
-    if (stretch) {
-      node.props = {
-        ...node.props,
-        style: {
-          ...node.props.style,
-          ...clearStylePosition(),
-          ...clearStyleSize(),
-          flex: 1,
-        },
-      };
-    }
   }
 
   return node;

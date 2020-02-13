@@ -1,17 +1,18 @@
 import nodeType from './node-type';
 import extNodeType from './ext-node-type';
-import layoutAndSize from './layout-and-size';
-
-import border from './border';
-import opacity from './opacity';
-import clipsContent from './clips-content';
 
 import backgroundSolid from './background-solid';
 import backgroundImage from './background-image';
 import backgroundLinearGradient from './background-linear-gradient';
 
+import border from './border';
+import opacity from './opacity';
+import clipsContent from './clips-content';
+
 import textStyles from './text-styles';
 
+import layoutAndSize from './layout-and-size';
+import stretch from './stretch';
 import exportAsImageOrSVG from './export-as-image-or-svg';
 import exportToComponent from './export-to-component';
 
@@ -26,6 +27,7 @@ const middlewares = [
   clipsContent,
   textStyles,
   layoutAndSize,
+  stretch,
   exportAsImageOrSVG,
   exportToComponent,
 ];

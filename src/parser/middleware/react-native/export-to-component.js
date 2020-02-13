@@ -4,7 +4,6 @@ import {
   copyStylePosition,
   copyStyleSize,
   clearStylePosition,
-  clearStyleSize,
 } from '../../../utils';
 
 export default async function middleware({
@@ -71,7 +70,6 @@ export default async function middleware({
       style: {
         ...props.style,
         ...clearStylePosition(),
-        ...clearStyleSize(),
         'last:prop': '...props.style',
       },
       'first:prop': '{...props}',

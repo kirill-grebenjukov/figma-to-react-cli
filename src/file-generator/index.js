@@ -36,8 +36,6 @@ export default async function exportTree({ context, sourceMap }) {
   Object.keys(sourceMap).forEach(key => {
     const node = sourceMap[key];
 
-    console.log(`\n### [${node.id}] '${node.name}' -> ${key}`);
-
     const extractStyles =
       ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
 
@@ -60,4 +58,11 @@ export default async function exportTree({ context, sourceMap }) {
       });
     }
   });
+
+  console.log('### Export Report ###');
+  Object.keys(sourceMap).forEach(key => {
+    const node = sourceMap[key];
+    console.log(`  [${node.id}] '${node.name}' -> ${key}`);
+  });
+  console.log('###');
 }
