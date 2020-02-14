@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = middleware;
 
-var _lodash = _interopRequireDefault(require("lodash"));
+var _get = _interopRequireDefault(require("lodash/get"));
 
 var _utils = require("../../../utils");
 
@@ -17,47 +17,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function middleware({
   node,
-  nodeJson
+  context
 }) {
   const {
-    fills
-  } = nodeJson;
-
-  if (!fills) {
-    return node;
-  }
-
-  const background = fills.find(({
-    type,
-    visible = true,
-    opacity = 1.0
-  }) => type === 'GRADIENT_LINEAR' && visible && opacity > 0);
-
-  if (!background) {
-    return node;
-  }
-
+    id
+  } = node;
   const {
-    opacity = 1.0,
-    gradientHandlePositions: [start, end],
-    gradientStops
-  } = background;
-  const colors = gradientStops.map(({
-    color: c
-  }) => (0, _utils.color)(c));
-  const locations = gradientStops.map(({
-    position
-  }) => position);
+    settingsJson
+  } = context;
+  const {
+    // we need it mostly for parent (screen) components to occupy all the available space
+    fullWidth = false,
+    fullHeight = false
+  } = settingsJson[id] || {};
+
+  if (!fullWidth && !fullHeight) {
+    return node;
+  }
+
+  if (fullWidth && fullHeight) {
+    return _objectSpread({}, node, {
+      props: {
+        style: _objectSpread({}, node.props.style, (0, _utils.clearStylePosition)(), (0, _utils.clearStyleSize)(), {
+          flex: 1
+        })
+      }
+    });
+  }
+
   return _objectSpread({}, node, {
-    importComponent: _lodash.default.concat(["import LinearGradient from 'react-native-linear-gradient';"], node.importComponent),
-    renderComponent: (props, children) => [`<LinearGradient ${(0, _utils.rip)({
-      style: _objectSpread({}, _lodash.default.get(props, 'style'), {
-        opacity
-      }),
-      start,
-      end,
-      colors,
-      locations
-    }, 0, `gradient-background-${props.key}`)}>`, ...node.renderComponent(props, children), '</LinearGradient>']
+    props: {
+      style: _objectSpread({}, node.props.style, fullWidth ? {
+        width: '100%'
+      } : {
+        height: '100%'
+      })
+    }
   });
 }

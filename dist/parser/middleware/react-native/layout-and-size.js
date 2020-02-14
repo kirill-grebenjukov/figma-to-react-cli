@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = middleware;
 
-var _get = _interopRequireDefault(require("lodash/get"));
+var _lodash = _interopRequireDefault(require("lodash"));
 
 var _utils = require("../../../utils");
 
@@ -28,7 +28,7 @@ function middleware({
     frameHeight
   } = context;
   const {
-    id,
+    name,
     type,
     absoluteBoundingBox: {
       x,
@@ -45,17 +45,21 @@ function middleware({
   if (['DOCUMENT', 'CANVAS'].indexOf(type) >= 0) {
     return _objectSpread({}, node, {
       props: _objectSpread({}, node.props, {
-        style: _objectSpread({}, (0, _get.default)(node, 'props.style'), {
+        style: _objectSpread({}, _lodash.default.get(node, 'props.style'), {
           flex: 1
         })
       })
     });
   }
 
-  const left = x - (0, _get.default)(parentJson, 'absoluteBoundingBox.x', frameX);
-  const top = y - (0, _get.default)(parentJson, 'absoluteBoundingBox.y', frameY);
-  const parentWidth = (0, _get.default)(parentJson, 'absoluteBoundingBox.width', frameWidth);
-  const parentHeight = (0, _get.default)(parentJson, 'absoluteBoundingBox.height', frameHeight);
+  const left = x - _lodash.default.get(parentJson, 'absoluteBoundingBox.x', frameX);
+
+  const top = y - _lodash.default.get(parentJson, 'absoluteBoundingBox.y', frameY);
+
+  const parentWidth = _lodash.default.get(parentJson, 'absoluteBoundingBox.width', frameWidth);
+
+  const parentHeight = _lodash.default.get(parentJson, 'absoluteBoundingBox.height', frameHeight);
+
   const right = parentWidth - width - left;
   const bottom = parentHeight - height - top;
   const hProps = {};
@@ -88,8 +92,10 @@ function middleware({
 
   }
 
-  const style = _objectSpread({}, (0, _get.default)(node, 'props.style'), {
-    position: 'absolute',
+  const position = _lodash.default.keys(hProps).length > 0 || _lodash.default.keys(vProps).length > 0 ? 'absolute' : undefined;
+
+  const style = _objectSpread({}, _lodash.default.get(node, 'props.style'), {
+    position,
     width,
     height
   }, hProps, vProps); // tested: LEFT_RIGHT, TOP_BOTTOM
@@ -97,27 +103,27 @@ function middleware({
 
   if (horizontal === 'LEFT_RIGHT' || vertical === 'TOP_BOTTOM') {
     return _objectSpread({}, node, {
-      importCode: ["import { View } from 'react-native';", ...node.importCode],
       props: _objectSpread({}, node.props, {
         style: _objectSpread({}, style, (0, _utils.clearStylePosition)(), {
           width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
           height: vertical === 'TOP_BOTTOM' ? '100%' : height
         })
       }),
-      renderInstance: node.renderInstance || node.renderCode,
-      renderCode: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
+      importDecorator: _lodash.default.concat(["import { View } from 'react-native';"], node.importCode),
+      renderDecorator2: node.renderDecorator,
+      renderDecorator: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
         style: _objectSpread({
-          position: 'absolute',
           width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
           height: vertical === 'TOP_BOTTOM' ? '100%' : height
         }, hProps, vProps, {
+          position,
           paddingLeft: horizontal === 'LEFT_RIGHT' ? left : undefined,
           paddingRight: horizontal === 'LEFT_RIGHT' ? right : undefined,
           paddingTop: vertical === 'TOP_BOTTOM' ? top : undefined,
           paddingBottom: vertical === 'TOP_BOTTOM' ? bottom : undefined // backgroundColor: node.id === '102:30' ? 'lime' : undefined,
 
         })
-      }, 0, `container-${props.key}`)}>`, ...thisNode.renderInstance(props, children, thisNode), '</View>']
+      }, 0, `container-${props.key}`)}>`, ...(thisNode.renderDecorator2 || thisNode.renderComponent)(props, children, thisNode), '</View>']
     });
   } // tested both: CENTER
 
@@ -126,26 +132,26 @@ function middleware({
     const marginLeft = horizontal === 'CENTER' ? left - (left + parentWidth - width - left) / 2 : 0;
     const marginTop = vertical === 'CENTER' ? top - (top + bottom) / 2 : 0;
     return _objectSpread({}, node, {
-      importCode: ["import { View } from 'react-native';", ...node.importCode],
       props: _objectSpread({}, node.props, {
         style: _objectSpread({}, style, (0, _utils.clearStylePosition)(), {
           marginLeft,
           marginTop
         })
       }),
-      renderInstance: node.renderInstance || node.renderCode,
-      renderCode: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
+      importDecorator: _lodash.default.concat(["import { View } from 'react-native';"], node.importDecorator),
+      renderDecorator2: node.renderDecorator,
+      renderDecorator: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
         style: _objectSpread({
-          position: 'absolute',
           width: horizontal === 'CENTER' ? '100%' : width,
           height: vertical === 'CENTER' ? '100%' : height
         }, hProps, vProps, {
+          position,
           justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
           alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start'
         })
       }, 0, `container-${props.key}`)}>`, `<View ${(0, _utils.rip)({
         style: _objectSpread({}, (0, _utils.copyStyleSize)(props))
-      }, 0, `inner-container-${props.key}`)}>`, ...thisNode.renderInstance(props, children, thisNode), '</View>', '</View>']
+      }, 0, `placeholder-${props.key}`)}>`, ...(thisNode.renderDecorator2 || thisNode.renderComponent)(props, children, thisNode), '</View>', '</View>']
     });
   }
 

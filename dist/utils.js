@@ -204,8 +204,10 @@ const rip0 = (props, level = 0) => {
     if (level > 0) {
       return `{${_lodash.default.keys(props).filter(key => !_lodash.default.isNil(props[key])).sort((a, b) => {
         if (a === 'first:prop') return -1;
+        if (b === 'first:prop') return 1;
         if (a === 'last:prop') return 1;
-        return a.localeCompare(b);
+        if (b === 'last:prop') return -1;
+        return 0;
       }).map(key => {
         if (key === 'first:prop' || key === 'last:prop') {
           return String(props[key]);
@@ -218,8 +220,10 @@ const rip0 = (props, level = 0) => {
 
     return `${_lodash.default.keys(props).sort((a, b) => {
       if (a === 'first:prop') return -1;
+      if (b === 'first:prop') return 1;
       if (a === 'last:prop') return 1;
-      return a.localeCompare(b);
+      if (b === 'last:prop') return -1;
+      return 0;
     }).map(key => {
       const value = props[key];
 
@@ -264,10 +268,12 @@ exports.rip = rip;
 
 const rc = children => _lodash.default.flatMap(children, child => {
   const {
-    renderCode,
+    renderDecorator,
+    renderComponent,
     props,
     children: ch
   } = child;
+  const renderCode = renderDecorator || renderComponent;
   return renderCode(props, ch, child);
 });
 
@@ -292,21 +298,11 @@ function getInstanceNode(node, props, componentName, componentPath, svgCode, con
   const codePrefix = svgCode ? codeSvgPrefix : codeClassPrefix;
   const ext = svgCode ? fileExt : componentExt;
   const filePath = [codePrefix, componentPath, `${(0, _justKebabCase.default)(componentName)}`, `${(0, _justKebabCase.default)(componentName)}.${getCodeExtension(ext)}`].filter(t => !!t).join('/');
-
-  if (node.renderInstance) {
-    return _objectSpread({}, node, {
-      props,
-      importCode: [`import ${componentName} from '${filePath}';`],
-      // eslint-disable-next-line no-shadow
-      renderInstance: props => [`<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`]
-    });
-  }
-
   return _objectSpread({}, node, {
     props,
-    importCode: [`import ${componentName} from '${filePath}';`],
+    importComponent: [`import ${componentName} from '${filePath}';`],
     // eslint-disable-next-line no-shadow
-    renderCode: props => [`<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`]
+    renderComponent: props => [`<${componentName} ${rip(props, 0, `instance-${props.key}`)} />`]
   });
 } // Aliases
 

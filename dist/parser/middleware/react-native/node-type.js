@@ -24,51 +24,51 @@ function middleware({
   switch (type) {
     case 'FRAME':
       // res.props = { ...node.props, style: { flex: 1 } };
-      res.importCode = ["import { View } from 'react-native';"];
+      res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderCode = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `frame-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `frame-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'GROUP':
-      res.importCode = ["import { View } from 'react-native';"];
+      res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderCode = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `group-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `group-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'VECTOR':
-      res.importCode = ["import { View } from 'react-native';"];
+      res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderCode = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `vector-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `vector-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'RECTANGLE':
-      res.importCode = ["import { View } from 'react-native';"];
+      res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderCode = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `rectangle-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `rectangle-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'TEXT':
-      res.importCode = ["import { Text } from 'react-native';"];
+      res.importComponent = ["import { Text } from 'react-native';"];
 
-      res.renderCode = props => [`<Text ${(0, _utils.rip)(props, 0, `text-${props.key}`)}>${(0, _utils.sanitizeText)(nodeJson.characters)}</Text>`];
+      res.renderComponent = props => [`<Text ${(0, _utils.rip)(props, 0, `text-${props.key}`)}>${(0, _utils.sanitizeText)(nodeJson.characters)}</Text>`];
 
       break;
 
     case 'COMPONENT':
-      res.importCode = ["import { View } from 'react-native';"];
+      res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderCode = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `component-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `component-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'INSTANCE':
-      res.importCode = ["import { View } from 'react-native';"];
+      res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderCode = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `instance-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `instance-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 

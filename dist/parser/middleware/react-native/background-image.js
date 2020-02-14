@@ -9,7 +9,7 @@ var _fs = _interopRequireDefault(require("fs"));
 
 var _axios = _interopRequireDefault(require("axios"));
 
-var _get = _interopRequireDefault(require("lodash/get"));
+var _lodash = _interopRequireDefault(require("lodash"));
 
 var _utils = require("../../../utils");
 
@@ -84,8 +84,8 @@ async function middleware({
   _fs.default.writeFileSync(filePath, data);
 
   return _objectSpread({}, node, {
-    importCode: ["import { ImageBackground } from 'react-native';"],
-    renderCode: (props, children) => [`<ImageBackground source={require('${exportImagesCodePrefix}/${fileName}')} ${(0, _utils.rip)({
+    importComponent: _lodash.default.concat(["import { ImageBackground } from 'react-native';"], node.importComponent),
+    renderComponent: (props, children) => [`<ImageBackground source={require('${exportImagesCodePrefix}/${fileName}')} ${(0, _utils.rip)({
       resizeMode: resizeModes[scaleMode],
       style: _objectSpread({}, (0, _utils.copyStylePosition)(props), (0, _utils.copyStyleSize)(props, {
         width: '100%',
@@ -93,8 +93,8 @@ async function middleware({
       }), {
         opacity
       })
-    }, 0, `background-${props.key}`)}>`, ...node.renderCode(_objectSpread({}, props, {
-      style: _objectSpread({}, (0, _get.default)(props, 'style'), (0, _utils.clearStylePosition)())
+    }, 0, `background-${props.key}`)}>`, ...node.renderComponent(_objectSpread({}, props, {
+      style: _objectSpread({}, _lodash.default.get(props, 'style'), (0, _utils.clearStylePosition)())
     }), children), '</ImageBackground>']
   });
 }

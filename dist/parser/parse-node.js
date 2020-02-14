@@ -44,16 +44,13 @@ async function parseNode({
     type,
     children: childrenJson
   } = nodeJson;
-  const blackOrWhiteListed = _lodash.default.isArray(whitelist) && whitelist.length > 0 && whitelist.indexOf(name) < 0 && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0);
+  const blackOrWhiteListed = !parentJson && (_lodash.default.isArray(whitelist) && whitelist.length > 0 && whitelist.indexOf(name) < 0 && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0));
 
   if (blackOrWhiteListed) {
     return null;
   }
 
   const {
-    // should we add `flex: 1` to the component style
-    // we need it for parent (screen) components to occupy all the available space
-    stretch = false,
     // don't export component completely
     dontExport = false,
     // parse component but skip its children
@@ -65,9 +62,7 @@ async function parseNode({
     // hoc
     hoc,
     // extend by an existing component
-    extend: {
-      mode
-    } = {}
+    extend
   } = settingsJson[id] || {};
 
   if (dontExport) {
@@ -88,10 +83,14 @@ async function parseNode({
       props: {
         key: id
       },
-      hoc
+      hoc,
+      extend
     });
   }
 
+  const {
+    mode
+  } = extend || {};
   let noChildren = skipChildren || !childrenJson || mode === _constants.USE_INSTEAD || exportAs || (0, _utils.isVector)(type);
 
   if (type === 'INSTANCE') {
@@ -142,14 +141,6 @@ async function parseNode({
       middlewares,
       context
     }), node);
-
-    if (stretch) {
-      node.props = _objectSpread({}, node.props, {
-        style: _objectSpread({}, node.props.style, (0, _utils.clearStylePosition)(), (0, _utils.clearStyleSize)(), {
-          flex: 1
-        })
-      });
-    }
   }
 
   return node;

@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = middleware;
 
-var _get = _interopRequireDefault(require("lodash/get"));
+var _lodash = _interopRequireDefault(require("lodash"));
 
 var _utils = require("../../../utils");
 
@@ -18,23 +18,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function middleware({
-  node,
-  nodeJson,
-  context
+  node
 }) {
   const {
-    id
-  } = nodeJson;
-  const {
-    settingsJson
-  } = context;
-  const {
-    extends: {
+    extend: {
       mode,
       import: extImport,
       component: extComponent
     } = {}
-  } = settingsJson[id] || {};
+  } = node;
 
   const res = _objectSpread({}, node);
 
@@ -42,19 +34,24 @@ function middleware({
     return res;
   }
 
-  res.importCode = [...node.importCode, ...extImport.split('\n')];
+  const extImports = extImport.split('\n');
 
   if (mode === _constants.USE_AS_ROOT) {
-    res.renderCode = (props, children) => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)}>`, ...(0, _utils.rc)(children), `</${extComponent}>`];
-  } else if (mode === _constants.USE_INSTEAD) {
-    res.renderCode = props => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)} />`];
-  } else if (mode === _constants.WRAP_WITH) {
-    res.renderInstance = node.renderInstance || node.renderCode;
+    res.importComponent = [...node.importComponent, ...extImports];
 
-    res.renderCode = (props, children, thisNode) => [`<${extComponent} ${(0, _utils.rip)({
+    res.renderComponent = (props, children) => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)}>`, ...(0, _utils.rc)(children), `</${extComponent}>`];
+  } else if (mode === _constants.USE_INSTEAD) {
+    res.importComponent = extImports;
+
+    res.renderComponent = props => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)} />`];
+  } else if (mode === _constants.WRAP_WITH) {
+    res.renderDecorator2 = res.renderDecorator;
+    res.importDecorator = _lodash.default.concat(node.importDecorator, extImports);
+
+    res.renderDecorator = (props, children, thisNode) => [`<${extComponent} ${(0, _utils.rip)({
       style: _objectSpread({}, (0, _utils.copyStylePosition)(props), (0, _utils.copyStyleSize)(props))
-    }, 0, `node-${props.key}`)}>`, ...thisNode.renderInstance(_objectSpread({}, props, {
-      style: _objectSpread({}, (0, _get.default)(props, 'style'), (0, _utils.clearStylePosition)())
+    }, 0, `node-${props.key}`)}>`, ...(thisNode.renderDecorator2 || thisNode.renderComponent)(_objectSpread({}, props, {
+      style: _objectSpread({}, _lodash.default.get(props, 'style'), (0, _utils.clearStylePosition)())
     }), children, thisNode), `</${extComponent}>`];
   }
 

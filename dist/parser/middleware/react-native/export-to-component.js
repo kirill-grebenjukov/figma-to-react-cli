@@ -68,7 +68,7 @@ async function middleware({
     // We also should split styles between ReactComponent and instance,
     // size and position should go to instance, others should go to ReactComponent
     const componentProps = _objectSpread({}, props, {
-      style: _objectSpread({}, props.style, (0, _utils.clearStylePosition)(), (0, _utils.clearStyleSize)(), {
+      style: _objectSpread({}, props.style, (0, _utils.clearStylePosition)(), {
         'last:prop': '...props.style'
       }),
       'first:prop': '{...props}'

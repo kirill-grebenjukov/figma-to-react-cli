@@ -20,10 +20,11 @@ var _toFile = _interopRequireDefault(require("./to-file"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function collectImports({
-  importCode,
+  importDecorator,
+  importComponent,
   children
 }) {
-  return _lodash.default.concat(importCode || [], _lodash.default.flatMap(children || [], child => collectImports(child)));
+  return _lodash.default.concat(importDecorator || [], importComponent || [], _lodash.default.flatMap(children || [], child => collectImports(child)));
 }
 
 function renderStyles(styles) {
@@ -52,12 +53,14 @@ function exportJSFile(template, stylesMode, component, {
   const {
     componentName,
     componentPath,
-    renderCode,
+    renderDecorator,
+    renderComponent,
     children,
     props,
     hoc,
     svgCode
   } = component;
+  const renderCode = renderDecorator || renderComponent;
   const exportPath = svgCode ? exportSvgPath : exportCodePath;
   const ext = svgCode ? fileExt : componentExt;
   const componentNameKebab = (0, _justKebabCase.default)(componentName);

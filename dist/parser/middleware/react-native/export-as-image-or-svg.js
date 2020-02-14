@@ -92,8 +92,6 @@ async function middleware({
   });
   const fileName = `${(0, _utils.sanitizeFileName)(name)}I${(0, _utils.sanitizeFileName)(id)}.${format}`;
 
-  const res = _objectSpread({}, node);
-
   if (format === 'svg') {
     const className = componentName || (0, _camelcase.default)(fileName, {
       pascalCase: true
@@ -125,42 +123,30 @@ async function middleware({
       componentName: className,
       componentPath,
       props: componentProps,
-      importCode: [],
-      renderCode: () => [],
+      importComponent: [],
+      renderComponent: () => [],
       svgCode
-    }); // eslint-disable-next-line no-shadow
-
-    const render = props => [`<${className} ${(0, _utils.rip)(props, 0, `svg-${props.key}`)} />`];
-
-    res.props = instanceProps;
-    res.importCode = [`import ${className} from '${classPath}';`];
-    res.svgCode = svgCode;
-
-    if (res.renderInstance) {
-      res.renderInstance = render;
-    } else {
-      res.renderCode = render;
-    }
-  } else {
-    const filePath = `${exportImagesPath}/${fileName}`;
-    const importPath = [exportImagesCodePrefix, fileName].filter(t => !!t).join('/');
-
-    _fs.default.mkdirSync(exportImagesPath, {
-      recursive: true
     });
-
-    _fs.default.writeFileSync(filePath, data);
-
-    res.importCode = ["import { Image } from 'react-native';"];
-
-    const render = props => [`<Image source={require('${importPath}')} ${(0, _utils.rip)(props, 0, `image-${props.key}`)} />`];
-
-    if (res.renderInstance) {
-      res.renderInstance = render;
-    } else {
-      res.renderCode = render;
-    }
+    return _objectSpread({}, node, {
+      svgCode,
+      props: instanceProps,
+      importComponent: [`import ${className} from '${classPath}';`],
+      // eslint-disable-next-line no-shadow
+      renderComponent: props => [`<${className} ${(0, _utils.rip)(props, 0, `svg-${props.key}`)} />`]
+    });
   }
 
-  return res;
+  const filePath = `${exportImagesPath}/${fileName}`;
+  const importPath = [exportImagesCodePrefix, fileName].filter(t => !!t).join('/');
+
+  _fs.default.mkdirSync(exportImagesPath, {
+    recursive: true
+  });
+
+  _fs.default.writeFileSync(filePath, data);
+
+  return _objectSpread({}, node, {
+    importComponent: ["import { Image } from 'react-native';"],
+    renderComponent: props => [`<Image source={require('${importPath}')} ${(0, _utils.rip)(props, 0, `image-${props.key}`)} />`]
+  });
 }
