@@ -109,8 +109,7 @@ function middleware({
           height: vertical === 'TOP_BOTTOM' ? '100%' : height
         })
       }),
-      importDecorator: _lodash.default.concat(["import { View } from 'react-native';"], node.importCode),
-      renderDecorator2: node.renderDecorator,
+      importDecorator: _lodash.default.concat(["import { View } from 'react-native';"], node.importDecorator || []),
       renderDecorator: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
         style: _objectSpread({
           width: horizontal === 'LEFT_RIGHT' ? '100%' : width,
@@ -123,7 +122,7 @@ function middleware({
           paddingBottom: vertical === 'TOP_BOTTOM' ? bottom : undefined // backgroundColor: node.id === '102:30' ? 'lime' : undefined,
 
         })
-      }, 0, `container-${props.key}`)}>`, ...(thisNode.renderDecorator2 || thisNode.renderComponent)(props, children, thisNode), '</View>']
+      }, 0, `container-${props.key}`)}>`, ...(node.renderDecorator || thisNode.renderComponent)(props, children, thisNode), '</View>']
     });
   } // tested both: CENTER
 
@@ -139,19 +138,20 @@ function middleware({
         })
       }),
       importDecorator: _lodash.default.concat(["import { View } from 'react-native';"], node.importDecorator),
-      renderDecorator2: node.renderDecorator,
       renderDecorator: (props, children, thisNode) => [`<View ${(0, _utils.rip)({
         style: _objectSpread({
           width: horizontal === 'CENTER' ? '100%' : width,
           height: vertical === 'CENTER' ? '100%' : height
         }, hProps, vProps, {
-          position,
           justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
-          alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start'
+          alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
+          // We need this to correctly position container
+          // example is a button with centered text
+          position: 'absolute'
         })
       }, 0, `container-${props.key}`)}>`, `<View ${(0, _utils.rip)({
         style: _objectSpread({}, (0, _utils.copyStyleSize)(props))
-      }, 0, `placeholder-${props.key}`)}>`, ...(thisNode.renderDecorator2 || thisNode.renderComponent)(props, children, thisNode), '</View>', '</View>']
+      }, 0, `placeholder-${props.key}`)}>`, ...(node.renderDecorator || thisNode.renderComponent)(props, children, thisNode), '</View>', '</View>']
     });
   }
 

@@ -44,7 +44,7 @@ async function parseNode({
     type,
     children: childrenJson
   } = nodeJson;
-  const blackOrWhiteListed = !parentJson && (_lodash.default.isArray(whitelist) && whitelist.length > 0 && whitelist.indexOf(name) < 0 && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0));
+  const blackOrWhiteListed = _lodash.default.isArray(whitelist) && whitelist.length > 0 && (whitelist.indexOf(name) < 0 || parentNode) && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 && !parentNode || blacklist.indexOf(id) >= 0);
 
   if (blackOrWhiteListed) {
     return null;
