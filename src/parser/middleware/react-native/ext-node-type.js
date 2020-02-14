@@ -23,7 +23,7 @@ export default function middleware({ node }) {
   const extImports = extImport.split('\n');
 
   if (mode === USE_AS_ROOT) {
-    res.importComponent = [...node.importComponent, ...extImports];
+    res.importComponent = _.concat(extImports, node.importComponent || []);
     res.renderComponent = (props, children) => [
       `<${extComponent} ${rip(props, 0, `node-${props.key}`)}>`,
       ...rc(children),
@@ -35,9 +35,7 @@ export default function middleware({ node }) {
       `<${extComponent} ${rip(props, 0, `node-${props.key}`)} />`,
     ];
   } else if (mode === WRAP_WITH) {
-    res.renderDecorator2 = res.renderDecorator;
-
-    res.importDecorator = _.concat(node.importDecorator, extImports);
+    res.importDecorator = _.concat(extImports, node.importDecorator || []);
     res.renderDecorator = (props, children, thisNode) => [
       `<${extComponent} ${rip(
         {
@@ -49,7 +47,7 @@ export default function middleware({ node }) {
         0,
         `node-${props.key}`,
       )}>`,
-      ...(thisNode.renderDecorator2 || thisNode.renderComponent)(
+      ...(node.renderDecorator || thisNode.renderComponent)(
         {
           ...props,
           style: {

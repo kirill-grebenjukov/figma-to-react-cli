@@ -30,14 +30,14 @@ export default async function parseNode({
   const { id, name, type, children: childrenJson } = nodeJson;
 
   const blackOrWhiteListed =
-    !parentJson &&
-    ((_.isArray(whitelist) &&
+    (_.isArray(whitelist) &&
       whitelist.length > 0 &&
-      whitelist.indexOf(name) < 0 &&
+      (whitelist.indexOf(name) < 0 || parentNode) &&
       whitelist.indexOf(id) < 0) ||
-      (_.isArray(blacklist) &&
-        blacklist.length > 0 &&
-        (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0)));
+    (_.isArray(blacklist) &&
+      blacklist.length > 0 &&
+      ((blacklist.indexOf(name) >= 0 && !parentNode) ||
+        blacklist.indexOf(id) >= 0));
 
   if (blackOrWhiteListed) {
     return null;

@@ -95,9 +95,8 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
       },
       importDecorator: _.concat(
         ["import { View } from 'react-native';"],
-        node.importCode,
+        node.importDecorator || [],
       ),
-      renderDecorator2: node.renderDecorator,
       renderDecorator: (props, children, thisNode) => [
         `<View ${rip(
           {
@@ -117,7 +116,7 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           0,
           `container-${props.key}`,
         )}>`,
-        ...(thisNode.renderDecorator2 || thisNode.renderComponent)(
+        ...(node.renderDecorator || thisNode.renderComponent)(
           props,
           children,
           thisNode,
@@ -150,7 +149,6 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
         ["import { View } from 'react-native';"],
         node.importDecorator,
       ),
-      renderDecorator2: node.renderDecorator,
       renderDecorator: (props, children, thisNode) => [
         `<View ${rip(
           {
@@ -159,9 +157,11 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
               height: vertical === 'CENTER' ? '100%' : height,
               ...hProps,
               ...vProps,
-              position,
               justifyContent: vertical === 'CENTER' ? 'center' : 'flex-start',
               alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
+              // We need this to correctly position container
+              // example is a button with centered text
+              position: 'absolute',
             },
           },
           0,
@@ -176,7 +176,7 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
           0,
           `placeholder-${props.key}`,
         )}>`,
-        ...(thisNode.renderDecorator2 || thisNode.renderComponent)(
+        ...(node.renderDecorator || thisNode.renderComponent)(
           props,
           children,
           thisNode,
