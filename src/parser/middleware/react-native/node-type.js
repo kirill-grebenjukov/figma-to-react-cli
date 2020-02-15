@@ -1,16 +1,15 @@
 import { rip, rc, sanitizeText } from '../../../utils';
 
 export default function middleware({ node, nodeJson }) {
-  const { type } = nodeJson;
+  const { type, id: key } = nodeJson;
 
   const res = { ...node };
 
   switch (type) {
     case 'FRAME':
-      // res.props = { ...node.props, style: { flex: 1 } };
       res.importComponent = ["import { View } from 'react-native';"];
       res.renderComponent = (props, children) => [
-        `<View ${rip(props, 0, `frame-${props.key}`)}>`,
+        `<View ${rip(props, 0, `frame-${key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -18,7 +17,7 @@ export default function middleware({ node, nodeJson }) {
     case 'GROUP':
       res.importComponent = ["import { View } from 'react-native';"];
       res.renderComponent = (props, children) => [
-        `<View ${rip(props, 0, `group-${props.key}`)}>`,
+        `<View ${rip(props, 0, `group-${key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -26,7 +25,7 @@ export default function middleware({ node, nodeJson }) {
     case 'VECTOR':
       res.importComponent = ["import { View } from 'react-native';"];
       res.renderComponent = (props, children) => [
-        `<View ${rip(props, 0, `vector-${props.key}`)}>`,
+        `<View ${rip(props, 0, `vector-${key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -34,7 +33,7 @@ export default function middleware({ node, nodeJson }) {
     case 'RECTANGLE':
       res.importComponent = ["import { View } from 'react-native';"];
       res.renderComponent = (props, children) => [
-        `<View ${rip(props, 0, `rectangle-${props.key}`)}>`,
+        `<View ${rip(props, 0, `rectangle-${key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -42,7 +41,7 @@ export default function middleware({ node, nodeJson }) {
     case 'TEXT':
       res.importComponent = ["import { Text } from 'react-native';"];
       res.renderComponent = props => [
-        `<Text ${rip(props, 0, `text-${props.key}`)}>${sanitizeText(
+        `<Text ${rip(props, 0, `text-${key}`)}>${sanitizeText(
           nodeJson.characters,
         )}</Text>`,
       ];
@@ -50,7 +49,7 @@ export default function middleware({ node, nodeJson }) {
     case 'COMPONENT':
       res.importComponent = ["import { View } from 'react-native';"];
       res.renderComponent = (props, children) => [
-        `<View ${rip(props, 0, `component-${props.key}`)}>`,
+        `<View ${rip(props, 0, `component-${key}`)}>`,
         ...rc(children),
         '</View>',
       ];
@@ -58,7 +57,7 @@ export default function middleware({ node, nodeJson }) {
     case 'INSTANCE':
       res.importComponent = ["import { View } from 'react-native';"];
       res.renderComponent = (props, children) => [
-        `<View ${rip(props, 0, `instance-${props.key}`)}>`,
+        `<View ${rip(props, 0, `instance-${key}`)}>`,
         ...rc(children),
         '</View>',
       ];

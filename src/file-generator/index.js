@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { resolve } from 'path';
+import _ from 'lodash';
 
 import exportJSFile from './component';
 import exportStoryFile from './storybook';
@@ -17,6 +18,8 @@ export default async function exportTree({ context, sourceMap }) {
       ),
       styles: stylesMode = 'inline',
     },
+    whitelist,
+    blacklist,
   } = context;
 
   const componentTemplate = fs.readFileSync(componentTemplatePath, {
@@ -33,8 +36,23 @@ export default async function exportTree({ context, sourceMap }) {
     ? fs.readFileSync(storybookTemplatePath, { encoding: 'utf8' })
     : null;
 
+  const report = {};
   Object.keys(sourceMap).forEach(key => {
     const node = sourceMap[key];
+
+    const { id, name } = node;
+    const blackOrWhiteListed =
+      (_.isArray(whitelist) &&
+        whitelist.length > 0 &&
+        whitelist.indexOf(name) < 0 &&
+        whitelist.indexOf(id) < 0) ||
+      (_.isArray(blacklist) &&
+        blacklist.length > 0 &&
+        (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0));
+
+    if (blackOrWhiteListed) {
+      return;
+    }
 
     const extractStyles =
       ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
@@ -57,11 +75,13 @@ export default async function exportTree({ context, sourceMap }) {
         context,
       });
     }
+
+    report[key] = node;
   });
 
   console.log('### Export Report ###');
-  Object.keys(sourceMap).forEach(key => {
-    const node = sourceMap[key];
+  Object.keys(report).forEach(key => {
+    const node = report[key];
     console.log(`  [${node.id}] '${node.name}' -> ${key}`);
   });
   console.log('###');
