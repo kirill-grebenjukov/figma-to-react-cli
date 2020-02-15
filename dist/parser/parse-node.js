@@ -34,9 +34,7 @@ async function parseNode({
     parser: {
       defaultComponent
     },
-    settingsJson,
-    whitelist,
-    blacklist
+    settingsJson
   } = context;
   const {
     id,
@@ -44,12 +42,6 @@ async function parseNode({
     type,
     children: childrenJson
   } = nodeJson;
-  const blackOrWhiteListed = _lodash.default.isArray(whitelist) && whitelist.length > 0 && (whitelist.indexOf(name) < 0 || parentNode) && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 && !parentNode || blacklist.indexOf(id) >= 0);
-
-  if (blackOrWhiteListed) {
-    return null;
-  }
-
   const {
     // don't export component completely
     dontExport = false,

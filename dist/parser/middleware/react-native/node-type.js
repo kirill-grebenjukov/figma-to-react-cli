@@ -16,59 +16,59 @@ function middleware({
   nodeJson
 }) {
   const {
-    type
+    type,
+    id: key
   } = nodeJson;
 
   const res = _objectSpread({}, node);
 
   switch (type) {
     case 'FRAME':
-      // res.props = { ...node.props, style: { flex: 1 } };
       res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `frame-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `frame-${key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'GROUP':
       res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `group-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `group-${key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'VECTOR':
       res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `vector-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `vector-${key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'RECTANGLE':
       res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `rectangle-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `rectangle-${key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'TEXT':
       res.importComponent = ["import { Text } from 'react-native';"];
 
-      res.renderComponent = props => [`<Text ${(0, _utils.rip)(props, 0, `text-${props.key}`)}>${(0, _utils.sanitizeText)(nodeJson.characters)}</Text>`];
+      res.renderComponent = props => [`<Text ${(0, _utils.rip)(props, 0, `text-${key}`)}>${(0, _utils.sanitizeText)(nodeJson.characters)}</Text>`];
 
       break;
 
     case 'COMPONENT':
       res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `component-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `component-${key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 
     case 'INSTANCE':
       res.importComponent = ["import { View } from 'react-native';"];
 
-      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `instance-${props.key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
+      res.renderComponent = (props, children) => [`<View ${(0, _utils.rip)(props, 0, `instance-${key}`)}>`, ...(0, _utils.rc)(children), '</View>'];
 
       break;
 

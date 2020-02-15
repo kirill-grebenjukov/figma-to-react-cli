@@ -9,6 +9,8 @@ var _fs = _interopRequireDefault(require("fs"));
 
 var _path = require("path");
 
+var _lodash = _interopRequireDefault(require("lodash"));
+
 var _component = _interopRequireDefault(require("./component"));
 
 var _storybook = _interopRequireDefault(require("./storybook"));
@@ -28,7 +30,9 @@ async function exportTree({
     exportCode: {
       template: componentTemplatePath = (0, _path.resolve)(__dirname, '../assets/templates/component.jst'),
       styles: stylesMode = 'inline'
-    }
+    },
+    whitelist,
+    blacklist
   } = context;
 
   const componentTemplate = _fs.default.readFileSync(componentTemplatePath, {
@@ -41,8 +45,19 @@ async function exportTree({
   const storybookTemplate = storybookCfg ? _fs.default.readFileSync(storybookTemplatePath, {
     encoding: 'utf8'
   }) : null;
+  const report = {};
   Object.keys(sourceMap).forEach(key => {
     const node = sourceMap[key];
+    const {
+      id,
+      name
+    } = node;
+    const blackOrWhiteListed = _lodash.default.isArray(whitelist) && whitelist.length > 0 && whitelist.indexOf(name) < 0 && whitelist.indexOf(id) < 0 || _lodash.default.isArray(blacklist) && blacklist.length > 0 && (blacklist.indexOf(name) >= 0 || blacklist.indexOf(id) >= 0);
+
+    if (blackOrWhiteListed) {
+      return;
+    }
+
     const extractStyles = ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
     const styles = extractStyles ? {} : null;
     (0, _utils.initGlobProps)(styles);
@@ -61,10 +76,12 @@ async function exportTree({
         context
       });
     }
+
+    report[key] = node;
   });
   console.log('### Export Report ###');
-  Object.keys(sourceMap).forEach(key => {
-    const node = sourceMap[key];
+  Object.keys(report).forEach(key => {
+    const node = report[key];
     console.log(`  [${node.id}] '${node.name}' -> ${key}`);
   });
   console.log('###');
