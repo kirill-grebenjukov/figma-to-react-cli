@@ -11,7 +11,12 @@ import { WRAP_WITH, USE_AS_ROOT, USE_INSTEAD } from '../../../constants';
 
 export default function middleware({ node }) {
   const {
-    extend: { mode, import: extImport, component: extComponent } = {},
+    extend: {
+      mode,
+      import: extImport,
+      component: extComponent,
+      props: extProps,
+    } = {},
   } = node;
 
   const res = { ...node };
@@ -25,14 +30,14 @@ export default function middleware({ node }) {
   if (mode === USE_AS_ROOT) {
     res.importComponent = _.concat(extImports, node.importComponent || []);
     res.renderComponent = (props, children) => [
-      `<${extComponent} ${rip(props, 0, `node-${props.key}`)}>`,
+      `<${extComponent} ${rip(props, 0, `node-${props.key}`)} ${extProps}>`,
       ...rc(children),
       `</${extComponent}>`,
     ];
   } else if (mode === USE_INSTEAD) {
     res.importComponent = extImports;
     res.renderComponent = props => [
-      `<${extComponent} ${rip(props, 0, `node-${props.key}`)} />`,
+      `<${extComponent} ${rip(props, 0, `node-${props.key}`)} ${extProps}/>`,
     ];
   } else if (mode === WRAP_WITH) {
     res.importDecorator = _.concat(extImports, node.importDecorator || []);
@@ -46,7 +51,7 @@ export default function middleware({ node }) {
         },
         0,
         `node-${props.key}`,
-      )}>`,
+      )} ${extProps}>`,
       ...(node.renderDecorator || thisNode.renderComponent)(
         {
           ...props,
