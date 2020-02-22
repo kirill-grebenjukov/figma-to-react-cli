@@ -96,4 +96,6 @@ export default function exportJSFile(
     ext,
     context,
   });
+
+  return `${exportPath}/${componentPath}/${componentNameKebab}`;
 }

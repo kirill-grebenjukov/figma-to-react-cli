@@ -60,7 +60,7 @@ export default async function exportTree({ context, sourceMap }) {
     const styles = extractStyles ? {} : null;
     initGlobProps(styles);
 
-    exportJSFile(componentTemplate, stylesMode, node, {
+    const filePath = exportJSFile(componentTemplate, stylesMode, node, {
       context,
     });
 
@@ -76,13 +76,13 @@ export default async function exportTree({ context, sourceMap }) {
       });
     }
 
-    report[key] = node;
+    report[key] = { ...node, filePath };
   });
 
   console.log('### Export Report ###');
   Object.keys(report).forEach(key => {
     const node = report[key];
-    console.log(`  [${node.id}] '${node.name}' -> ${key}`);
+    console.log(`  [${node.id}] '${node.name}' -> ${key} -> ${node.filePath}`);
   });
   console.log('###');
 }

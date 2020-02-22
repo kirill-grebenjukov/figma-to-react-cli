@@ -255,6 +255,11 @@ export const rc = children =>
     const { renderDecorator, renderComponent, props, children: ch } = child;
     const renderCode = renderDecorator || renderComponent;
 
+    if (!renderCode) {
+      console.warn('renderCode is null for ', child);
+      return [];
+    }
+
     return renderCode(props, ch, child);
   });
 
