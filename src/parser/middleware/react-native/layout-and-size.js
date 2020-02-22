@@ -1,11 +1,16 @@
 import _ from 'lodash';
 import { rip, clearStylePosition, copyStyleSize } from '../../../utils';
 
-export default function middleware({ parentJson, node, nodeJson, context }) {
+export default function middleware({
+  parentJson,
+  parentNode,
+  node,
+  nodeJson,
+  context,
+}) {
   const { frameX, frameY, frameWidth, frameHeight } = context;
 
   const {
-    name,
     type,
     absoluteBoundingBox: { x, y, width, height },
     constraints: { vertical, horizontal },
@@ -161,7 +166,7 @@ export default function middleware({ parentJson, node, nodeJson, context }) {
               alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
               // We need this to correctly position container
               // example is a button with centered text
-              position: 'absolute',
+              position: parentNode ? 'absolute' : undefined,
             },
           },
           0,
