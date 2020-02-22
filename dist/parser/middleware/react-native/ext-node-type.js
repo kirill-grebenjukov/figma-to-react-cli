@@ -24,7 +24,8 @@ function middleware({
     extend: {
       mode,
       import: extImport,
-      component: extComponent
+      component: extComponent,
+      props: extProps
     } = {}
   } = node;
 
@@ -39,17 +40,17 @@ function middleware({
   if (mode === _constants.USE_AS_ROOT) {
     res.importComponent = _lodash.default.concat(extImports, node.importComponent || []);
 
-    res.renderComponent = (props, children) => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)}>`, ...(0, _utils.rc)(children), `</${extComponent}>`];
+    res.renderComponent = (props, children) => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)} ${extProps}>`, ...(0, _utils.rc)(children), `</${extComponent}>`];
   } else if (mode === _constants.USE_INSTEAD) {
     res.importComponent = extImports;
 
-    res.renderComponent = props => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)} />`];
+    res.renderComponent = props => [`<${extComponent} ${(0, _utils.rip)(props, 0, `node-${props.key}`)} ${extProps}/>`];
   } else if (mode === _constants.WRAP_WITH) {
     res.importDecorator = _lodash.default.concat(extImports, node.importDecorator || []);
 
     res.renderDecorator = (props, children, thisNode) => [`<${extComponent} ${(0, _utils.rip)({
       style: _objectSpread({}, (0, _utils.copyStylePosition)(props), (0, _utils.copyStyleSize)(props))
-    }, 0, `node-${props.key}`)}>`, ...(node.renderDecorator || thisNode.renderComponent)(_objectSpread({}, props, {
+    }, 0, `node-${props.key}`)} ${extProps}>`, ...(node.renderDecorator || thisNode.renderComponent)(_objectSpread({}, props, {
       style: _objectSpread({}, _lodash.default.get(props, 'style'), (0, _utils.clearStylePosition)())
     }), children, thisNode), `</${extComponent}>`];
   }
