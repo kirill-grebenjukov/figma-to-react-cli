@@ -17,6 +17,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function middleware({
   parentJson,
+  parentNode,
   node,
   nodeJson,
   context
@@ -28,7 +29,6 @@ function middleware({
     frameHeight
   } = context;
   const {
-    name,
     type,
     absoluteBoundingBox: {
       x,
@@ -147,7 +147,7 @@ function middleware({
           alignItems: horizontal === 'CENTER' ? 'center' : 'flex-start',
           // We need this to correctly position container
           // example is a button with centered text
-          position: 'absolute'
+          position: parentNode ? 'absolute' : undefined
         })
       }, 0, `container-${props.key}`)}>`, `<View ${(0, _utils.rip)({
         style: _objectSpread({}, (0, _utils.copyStyleSize)(props))
