@@ -274,6 +274,12 @@ const rc = children => _lodash.default.flatMap(children, child => {
     children: ch
   } = child;
   const renderCode = renderDecorator || renderComponent;
+
+  if (!renderCode) {
+    console.warn('renderCode is null for ', child);
+    return [];
+  }
+
   return renderCode(props, ch, child);
 });
 

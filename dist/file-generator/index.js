@@ -21,6 +21,10 @@ var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? Object(arguments[i]) : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 async function exportTree({
   context,
   sourceMap
@@ -61,7 +65,7 @@ async function exportTree({
     const extractStyles = ['in-component-file', 'in-styles-file'].indexOf(stylesMode) >= 0;
     const styles = extractStyles ? {} : null;
     (0, _utils.initGlobProps)(styles);
-    (0, _component.default)(componentTemplate, stylesMode, node, {
+    const filePath = (0, _component.default)(componentTemplate, stylesMode, node, {
       context
     });
 
@@ -77,12 +81,14 @@ async function exportTree({
       });
     }
 
-    report[key] = node;
+    report[key] = _objectSpread({}, node, {
+      filePath
+    });
   });
   console.log('### Export Report ###');
   Object.keys(report).forEach(key => {
     const node = report[key];
-    console.log(`  [${node.id}] '${node.name}' -> ${key}`);
+    console.log(`  [${node.id}] '${node.name}' -> ${key} -> ${node.filePath}`);
   });
   console.log('###');
 }

@@ -87,4 +87,5 @@ function exportJSFile(template, stylesMode, component, {
     ext,
     context
   });
+  return `${exportPath}/${componentPath}/${componentNameKebab}`;
 }
