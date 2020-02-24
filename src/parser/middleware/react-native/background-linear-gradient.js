@@ -32,7 +32,7 @@ export default function middleware({ node, nodeJson }) {
       ["import LinearGradient from 'react-native-linear-gradient';"],
       node.importComponent,
     ),
-    renderComponent: (props, children) => [
+    renderComponent: (props, children, thisNode) => [
       `<LinearGradient ${rip(
         {
           style: {
@@ -47,7 +47,7 @@ export default function middleware({ node, nodeJson }) {
         0,
         `gradient-background-${props.key}`,
       )}>`,
-      ...node.renderComponent(props, children),
+      ...node.renderComponent(props, children, thisNode),
       '</LinearGradient>',
     ],
   };

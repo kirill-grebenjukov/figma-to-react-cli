@@ -1,7 +1,7 @@
 import uniq from 'lodash/uniq';
 import keys from 'lodash/keys';
 
-const regexp = /import(?:["'\s]*([\w*${}\n\r\t, ]+)from\s*)?["'\s]["'\s](.*[@\w_-]+)["'\s].*;$/;
+const regexp = /import(?:["'\s]*([\w*${}\n\r\t, ]+)from\s*)?["'\s]["'\s](.*[@\w_-]+)["'\s].*$/;
 
 export function linesToMap(imports) {
   const map = {};

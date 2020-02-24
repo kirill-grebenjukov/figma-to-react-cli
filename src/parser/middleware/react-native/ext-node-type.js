@@ -14,11 +14,12 @@ export default function middleware({ node }) {
     extend: {
       mode,
       import: extImport,
-      component: extComponent,
-      props: extProps,
+      component: extComponent0,
+      props: extProps = '',
     } = {},
   } = node;
 
+  const extComponent = extComponent0 && extComponent0.split(' ').join('');
   const res = { ...node };
 
   if (!mode || !extImport || !extComponent) {

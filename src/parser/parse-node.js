@@ -2,12 +2,7 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 
 import { USE_INSTEAD } from '../constants';
-import {
-  findNode,
-  isVector,
-  clearStylePosition,
-  clearStyleSize,
-} from '../utils';
+import { findNode, isVector } from '../utils';
 
 export default async function parseNode({
   // parent node

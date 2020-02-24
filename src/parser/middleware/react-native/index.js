@@ -1,3 +1,5 @@
+import concat from 'lodash/concat';
+
 import nodeType from './node-type';
 import extNodeType from './ext-node-type';
 
@@ -28,8 +30,8 @@ const middlewares = [
   textStyles,
   layoutAndSize,
   stretch,
-  exportAsImageOrSVG,
-  exportToComponent,
 ];
 
-export default middlewares;
+const tail = [exportAsImageOrSVG, exportToComponent];
+
+export default custom => concat(middlewares, custom, tail);
