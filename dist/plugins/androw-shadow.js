@@ -7,7 +7,7 @@ exports.default = middleware;
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
-var _utils = require("../../../utils");
+var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20,44 +20,55 @@ function middleware({
   nodeJson
 }) {
   const {
-    fills
+    name
+  } = nodeJson;
+  const {
+    effects
   } = nodeJson;
 
-  if (!fills) {
+  if (!effects || effects.length === 0) {
     return node;
   }
 
-  const background = fills.find(({
+  const effect = effects.find(({
     type,
-    visible = true,
-    opacity = 1.0
-  }) => type === 'GRADIENT_LINEAR' && visible && opacity > 0);
+    visible
+  }) => visible && type === 'DROP_SHADOW');
 
-  if (!background) {
+  if (!effect) {
     return node;
   }
 
   const {
-    opacity = 1.0,
-    gradientHandlePositions: [start, end],
-    gradientStops
-  } = background;
-  const colors = gradientStops.map(({
-    color: c
-  }) => (0, _utils.color)(c));
-  const locations = gradientStops.map(({
-    position
-  }) => position);
+    color: {
+      r,
+      g,
+      b,
+      a
+    },
+    offset: {
+      x,
+      y
+    },
+    radius
+  } = effect;
   return _objectSpread({}, node, {
-    importComponent: _lodash.default.concat(["import LinearGradient from 'react-native-linear-gradient';"], node.importComponent),
-    renderComponent: (props, children, thisNode) => [`<LinearGradient ${(0, _utils.rip)({
-      style: _objectSpread({}, _lodash.default.get(props, 'style'), {
-        opacity
-      }),
-      start,
-      end,
-      colors,
-      locations
-    }, 0, `gradient-background-${props.key}`)}>`, ...node.renderComponent(props, children, thisNode), '</LinearGradient>']
+    importComponent: _lodash.default.concat(["import Androw from 'react-native-androw';"], node.importComponent),
+    renderComponent: (props, children, thisNode) => [`<Androw ${(0, _utils.rip)({
+      style: {
+        shadowOffset: {
+          width: x,
+          height: y
+        },
+        shadowRadius: radius,
+        shadowColor: (0, _utils.color)({
+          r,
+          g,
+          b,
+          a: 1
+        }),
+        shadowOpacity: a
+      }
+    }, 0, `shadow-${props.key}`)}>`, ...node.renderComponent(props, children, thisNode), '</Androw>']
   });
 }

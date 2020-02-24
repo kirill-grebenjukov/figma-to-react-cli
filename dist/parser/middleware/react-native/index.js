@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _concat = _interopRequireDefault(require("lodash/concat"));
+
 var _nodeType = _interopRequireDefault(require("./node-type"));
 
 var _extNodeType = _interopRequireDefault(require("./ext-node-type"));
@@ -33,6 +35,9 @@ var _exportToComponent = _interopRequireDefault(require("./export-to-component")
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const middlewares = [_nodeType.default, _extNodeType.default, _backgroundSolid.default, _backgroundImage.default, _backgroundLinearGradient.default, _border.default, _opacity.default, _clipsContent.default, _textStyles.default, _layoutAndSize.default, _stretch.default, _exportAsImageOrSvg.default, _exportToComponent.default];
-var _default = middlewares;
+const middlewares = [_nodeType.default, _extNodeType.default, _backgroundSolid.default, _backgroundImage.default, _backgroundLinearGradient.default, _border.default, _opacity.default, _clipsContent.default, _textStyles.default, _layoutAndSize.default, _stretch.default];
+const tail = [_exportAsImageOrSvg.default, _exportToComponent.default];
+
+var _default = custom => (0, _concat.default)(middlewares, custom, tail);
+
 exports.default = _default;
