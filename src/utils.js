@@ -242,12 +242,16 @@ export const initGlobProps = props => {
 export const getGlobProps = () => globProps;
 
 export const rip = (props, level = 0, name = null) => {
+  const value = rip0(props, level);
+
   if (level === 0 && name && globProps) {
     globProps[name] = props;
-    return `{...PROPS['${name}'](props)}`;
+
+    const hasProps = value.indexOf('...props') >= 0;
+    return hasProps ? `{...PROPS['${name}'](props)}` : `{...PROPS['${name}']}`;
   }
 
-  return rip0(props, level);
+  return value;
 };
 
 export const rc = children =>

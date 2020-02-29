@@ -18,7 +18,11 @@ export function renderProps(props) {
         .join('...props,');
       const hasProps = value.indexOf('...props') >= 0;
 
-      return [`${key}: ${hasProps ? 'props' : '()'} => (`, value, '),'];
+      return [
+        `${key}: ${hasProps ? 'props => (' : ''}`,
+        value,
+        hasProps ? '),' : ', ',
+      ];
     }),
   ];
 }
