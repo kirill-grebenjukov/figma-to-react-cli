@@ -25,7 +25,7 @@ function renderProps(props) {
     const key = key0.indexOf('-') ? `'${key0}'` : key0;
     const value = (0, _utils.rip0)(props[key0], 1).split('{...props},').join('...props,');
     const hasProps = value.indexOf('...props') >= 0;
-    return [`${key}: ${hasProps ? 'props' : '()'} => (`, value, '),'];
+    return [`${key}: ${hasProps ? 'props => (' : ''}`, value, hasProps ? '),' : ', '];
   })];
 }
 
