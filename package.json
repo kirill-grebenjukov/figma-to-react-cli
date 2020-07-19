@@ -81,7 +81,7 @@
     "cosmiconfig": "6.0.0",
     "figma-api": "1.5.5",
     "just-kebab-case": "1.1.0",
-    "lodash": "4.17.15"
+    "lodash": "4.17.19"
   },
   "peerDependencies": {
     "eslint": "5.16.0",
